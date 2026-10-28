@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
-import { Calendar, ArrowDown, Scissors, Clock, ShieldCheck, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
+import { Calendar, ArrowDown, Scissors, Clock, ShieldCheck } from 'lucide-react';
 
 interface HeroProps {
   salonName?: string;
@@ -13,48 +13,26 @@ export default function Hero({
   tagline = 'YOUR STYLE. YOUR SIGNATURE.',
 }: HeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
-    // Force muted and autoplay programmatically for maximum mobile/desktop browser compatibility
+    // Force muted and autoplay programmatically for seamless cross-browser playback
     if (videoRef.current) {
       videoRef.current.defaultMuted = true;
       videoRef.current.muted = true;
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
-        playPromise
-          .then(() => setIsPlaying(true))
-          .catch(() => {
-            // Browser restricted autoplay without user interaction
-            setIsPlaying(false);
-          });
+        playPromise.catch(() => {
+          // Autoplay handled by browser
+        });
       }
     }
   }, []);
-
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-    }
-  };
-
-  const toggleMute = () => {
-    if (!videoRef.current) return;
-    const nextMuted = !videoRef.current.muted;
-    videoRef.current.muted = nextMuted;
-    setIsMuted(nextMuted);
-  };
 
   return (
     <section className="relative min-h-[95vh] sm:min-h-screen flex items-center justify-center pt-24 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#0B0B0B]">
       {/* ================= BACKGROUND VIDEO & CINEMATIC OVERLAYS ================= */}
       <div className="absolute inset-0 z-0 overflow-hidden select-none">
-        {/* Background HTML5 Video - Clearly visible & vibrant */}
+        {/* Background HTML5 Video - Seamless continuous loop */}
         <video
           ref={videoRef}
           autoPlay
@@ -155,49 +133,14 @@ export default function Hero({
           </div>
         </div>
 
-        {/* Background Video Control Bar */}
-        <div className="mt-8 flex items-center space-x-4">
-          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#141414]/90 backdrop-blur-md border border-[#C8A24D]/30 text-xs text-[#F5F2EA] shadow-xl">
-            <button
-              onClick={togglePlay}
-              className="hover:text-[#C8A24D] transition flex items-center space-x-1.5 focus:outline-none"
-              aria-label={isPlaying ? 'Pause background video' : 'Play background video'}
-            >
-              {isPlaying ? (
-                <>
-                  <Pause className="w-3.5 h-3.5 text-[#C8A24D]" />
-                  <span className="text-[11px] text-[#A6A6A6] font-medium">Pause Video</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-3.5 h-3.5 text-[#C8A24D] fill-[#C8A24D]" />
-                  <span className="text-[11px] text-[#C8A24D] font-medium">Play Video</span>
-                </>
-              )}
-            </button>
-            <span className="text-[#333]">|</span>
-            <button
-              onClick={toggleMute}
-              className="hover:text-[#C8A24D] transition flex items-center space-x-1 focus:outline-none"
-              aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-            >
-              {isMuted ? (
-                <VolumeX className="w-3.5 h-3.5 text-[#A6A6A6]" />
-              ) : (
-                <Volume2 className="w-3.5 h-3.5 text-[#C8A24D]" />
-              )}
-              <span className="text-[11px] text-[#A6A6A6] hidden sm:inline">
-                {isMuted ? 'Muted' : 'Sound On'}
-              </span>
-            </button>
-          </div>
-
+        {/* Scroll Indicator */}
+        <div className="mt-8 flex items-center justify-center">
           <a
             href="#services"
             className="text-[#A6A6A6] hover:text-[#C8A24D] transition-colors p-2"
             aria-label="Scroll to services"
           >
-            <ArrowDown className="w-4 h-4 animate-bounce text-[#C8A24D]" />
+            <ArrowDown className="w-5 h-5 animate-bounce text-[#C8A24D]" />
           </a>
         </div>
       </div>
