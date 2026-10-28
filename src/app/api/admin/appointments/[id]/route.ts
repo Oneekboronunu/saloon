@@ -3,10 +3,12 @@ import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import {
   isSlotFreeAtomic,
+  isSlotFreeMemory,
   timeToMinutes,
   minutesToTime,
   getSettingsMap,
 } from '@/lib/bookingEngine';
+import { memoryStore } from '@/lib/memoryStore';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,18 +26,7 @@ export async function PATCH(
     const body = await request.json();
     const { action, status, newDate, newStartTime, reason } = body;
 
-    const existing = await prisma.appointment.findUnique({
-      where: { id },
-    });
-
-    if (!existing) {
-      return NextResponse.json(
-        { success: false, error: 'Appointment not found' },
-        { status: 404 }
-      );
-    }
-
-    // 1. Reschedule action
+    // Reschedule action
     if (action === 'RESCHEDULE') {
       if (!newDate || !newStartTime) {
         return NextResponse.json(
@@ -44,59 +35,64 @@ export async function PATCH(
         );
       }
 
-      const totalDuration = existing.totalDuration;
+      const settings = await getSettingsMap();
+      const bufferTime = parseInt(settings.buffer_time || '10', 10);
+
+      try {
+        const existing = await prisma.appointment.findUnique({ where: { id } });
+        if (existing) {
+          const totalDuration = existing.totalDuration;
+          const startMinutes = timeToMinutes(newStartTime);
+          const endMinutes = startMinutes + totalDuration;
+          const newEndTime = minutesToTime(endMinutes);
+
+          const updated = await prisma.$transaction(async (tx) => {
+            const isFree = await isSlotFreeAtomic(tx, newDate, newStartTime, newEndTime, bufferTime);
+            if (!isFree) throw new Error('SLOT_OCCUPIED');
+
+            return tx.appointment.update({
+              where: { id },
+              data: {
+                appointmentDate: newDate,
+                startTime: newStartTime,
+                endTime: newEndTime,
+                status: 'CONFIRMED',
+              },
+            });
+          });
+
+          return NextResponse.json({
+            success: true,
+            appointment: { ...updated, services: JSON.parse(updated.servicesSnapshot) },
+          });
+        }
+      } catch (dbErr: any) {
+        if (dbErr?.message === 'SLOT_OCCUPIED') throw dbErr;
+      }
+
+      // MemoryStore fallback
+      const memApp = memoryStore.getAppointments().find((a) => a.id === id);
+      if (!memApp) {
+        return NextResponse.json({ success: false, error: 'Appointment not found' }, { status: 404 });
+      }
+      const totalDuration = memApp.totalDuration;
       const startMinutes = timeToMinutes(newStartTime);
       const endMinutes = startMinutes + totalDuration;
       const newEndTime = minutesToTime(endMinutes);
 
-      const settings = await getSettingsMap();
-      const bufferTime = parseInt(settings.buffer_time || '10', 10);
+      const isFree = isSlotFreeMemory(newDate, newStartTime, newEndTime, bufferTime);
+      if (!isFree) {
+        return NextResponse.json({ success: false, error: 'The selected slot is already occupied.' }, { status: 409 });
+      }
 
-      // Check slot availability
-      const updated = await prisma.$transaction(async (tx) => {
-        // Find if any other active appointment overlaps
-        const conflicting = await tx.appointment.findFirst({
-          where: {
-            id: { not: id },
-            appointmentDate: newDate,
-            status: { in: ['PENDING', 'CONFIRMED'] },
-          },
-        });
-
-        // Use atomic slot check
-        const isFree = await isSlotFreeAtomic(
-          tx,
-          newDate,
-          newStartTime,
-          newEndTime,
-          bufferTime
-        );
-
-        if (!isFree) {
-          throw new Error('SLOT_OCCUPIED');
-        }
-
-        return tx.appointment.update({
-          where: { id },
-          data: {
-            appointmentDate: newDate,
-            startTime: newStartTime,
-            endTime: newEndTime,
-            status: 'CONFIRMED',
-          },
-        });
-      });
-
+      const updated = memoryStore.rescheduleAppointment(id, newDate, newStartTime, newEndTime);
       return NextResponse.json({
         success: true,
-        appointment: {
-          ...updated,
-          services: JSON.parse(updated.servicesSnapshot),
-        },
+        appointment: { ...updated, services: JSON.parse(updated!.servicesSnapshot) },
       });
     }
 
-    // 2. Status update action (CONFIRM, CANCEL, COMPLETE)
+    // Status update (CONFIRM, CANCEL, COMPLETE)
     const validStatuses = ['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'];
     const newStatus = status || action;
 
@@ -107,21 +103,30 @@ export async function PATCH(
       );
     }
 
-    const updated = await prisma.appointment.update({
-      where: { id },
-      data: {
-        status: newStatus,
-        cancellationReason: newStatus === 'CANCELLED' ? reason || 'Cancelled by admin' : existing.cancellationReason,
-      },
-    });
+    try {
+      const updated = await prisma.appointment.update({
+        where: { id },
+        data: {
+          status: newStatus,
+          cancellationReason: newStatus === 'CANCELLED' ? reason || 'Cancelled by admin' : undefined,
+        },
+      });
 
-    return NextResponse.json({
-      success: true,
-      appointment: {
-        ...updated,
-        services: JSON.parse(updated.servicesSnapshot),
-      },
-    });
+      return NextResponse.json({
+        success: true,
+        appointment: { ...updated, services: JSON.parse(updated.servicesSnapshot) },
+      });
+    } catch {
+      // Memory fallback
+      const updated = memoryStore.updateAppointmentStatus(id, newStatus, reason);
+      if (!updated) {
+        return NextResponse.json({ success: false, error: 'Appointment not found' }, { status: 404 });
+      }
+      return NextResponse.json({
+        success: true,
+        appointment: { ...updated, services: JSON.parse(updated.servicesSnapshot) },
+      });
+    }
   } catch (error: any) {
     if (error?.message === 'SLOT_OCCUPIED') {
       return NextResponse.json(

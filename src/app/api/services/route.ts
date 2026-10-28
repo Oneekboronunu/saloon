@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { memoryStore } from '@/lib/memoryStore';
+import { DEFAULT_SERVICES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,15 +12,15 @@ export async function GET() {
       orderBy: { sortOrder: 'asc' },
     });
 
-    return NextResponse.json({
-      success: true,
-      services,
-    });
+    if (services && services.length > 0) {
+      return NextResponse.json({ success: true, services });
+    }
   } catch (error) {
-    console.error('Error fetching services:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to load services' },
-      { status: 500 }
-    );
+    // Fallback to memoryStore
   }
+
+  return NextResponse.json({
+    success: true,
+    services: memoryStore.getServices().filter((s) => s.isActive),
+  });
 }

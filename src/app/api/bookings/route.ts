@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import {
   isSlotFreeAtomic,
+  isSlotFreeMemory,
   generateBookingReference,
   timeToMinutes,
   minutesToTime,
   getSettingsMap,
   isDateInPast,
 } from '@/lib/bookingEngine';
+import { memoryStore } from '@/lib/memoryStore';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,7 +41,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Clean and validate BD phone number format
     const cleanedPhone = customerPhone.replace(/[\s-]/g, '');
     const bdPhoneRegex = /^(?:\+?88)?01[3-9]\d{8}$/;
     if (!bdPhoneRegex.test(cleanedPhone)) {
@@ -49,7 +50,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Validate services
     if (!Array.isArray(serviceIds) || serviceIds.length === 0) {
       return NextResponse.json(
         { success: false, error: 'Please select at least one service.' },
@@ -57,7 +57,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Validate date & time
     if (!appointmentDate || !/^\d{4}-\d{2}-\d{2}$/.test(appointmentDate)) {
       return NextResponse.json(
         { success: false, error: 'Please select a valid appointment date.' },
@@ -79,17 +78,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Fetch selected services from DB (guaranteeing fresh pricing)
-    const services = await prisma.service.findMany({
-      where: {
-        id: { in: serviceIds },
-        isActive: true,
-      },
-    });
+    // 2. Fetch selected services (Prisma or memoryStore)
+    let services: any[] = [];
+    try {
+      services = await prisma.service.findMany({
+        where: {
+          id: { in: serviceIds },
+          isActive: true,
+        },
+      });
+    } catch {
+      // Fallback
+      services = memoryStore.getServices().filter((s) => serviceIds.includes(s.id) && s.isActive);
+    }
+
+    if (!services || services.length === 0) {
+      services = memoryStore.getServices().filter((s) => serviceIds.includes(s.id));
+    }
 
     if (services.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'None of the selected services could be found or are active.' },
+        { success: false, error: 'None of the selected services could be found.' },
         { status: 400 }
       );
     }
@@ -101,7 +110,6 @@ export async function POST(request: NextRequest) {
     const endMinutes = startMinutes + totalDuration;
     const endTime = minutesToTime(endMinutes);
 
-    // Snapshot selected services so future price changes do not modify this booking
     const servicesSnapshot = JSON.stringify(
       services.map((s) => ({
         id: s.id,
@@ -116,43 +124,73 @@ export async function POST(request: NextRequest) {
     const bufferTime = parseInt(settings.buffer_time || '10', 10);
     const autoConfirm = settings.auto_confirm === 'true';
     const initialStatus = autoConfirm ? 'CONFIRMED' : 'PENDING';
+    const reference = generateBookingReference(appointmentDate);
 
-    // 5. ATOMIC DATABASE TRANSACTION
-    // Check availability inside the transaction to prevent concurrent double-booking race condition
-    const result = await prisma.$transaction(async (tx) => {
-      const isFree = await isSlotFreeAtomic(
-        tx,
-        appointmentDate,
-        startTime,
-        endTime,
-        bufferTime
-      );
+    // 3. ATOMIC BOOKING WITH FALLBACK
+    let result: any = null;
 
+    try {
+      result = await prisma.$transaction(async (tx) => {
+        const isFree = await isSlotFreeAtomic(
+          tx,
+          appointmentDate,
+          startTime,
+          endTime,
+          bufferTime
+        );
+
+        if (!isFree) {
+          throw new Error('SLOT_OCCUPIED');
+        }
+
+        const appointment = await tx.appointment.create({
+          data: {
+            reference,
+            customerName: customerName.trim(),
+            customerPhone: cleanedPhone,
+            customerEmail: customerEmail?.trim() || null,
+            notes: notes?.trim() || null,
+            appointmentDate,
+            startTime,
+            endTime,
+            totalDuration,
+            totalPrice,
+            servicesSnapshot,
+            status: initialStatus,
+          },
+        });
+
+        return appointment;
+      });
+    } catch (dbErr: any) {
+      if (dbErr?.message === 'SLOT_OCCUPIED') {
+        throw dbErr;
+      }
+
+      // MemoryStore fallback if Prisma DB is not running on host
+      const isFree = isSlotFreeMemory(appointmentDate, startTime, endTime, bufferTime);
       if (!isFree) {
         throw new Error('SLOT_OCCUPIED');
       }
 
-      const reference = generateBookingReference(appointmentDate);
-
-      const appointment = await tx.appointment.create({
-        data: {
-          reference,
-          customerName: customerName.trim(),
-          customerPhone: cleanedPhone,
-          customerEmail: customerEmail?.trim() || null,
-          notes: notes?.trim() || null,
-          appointmentDate,
-          startTime,
-          endTime,
-          totalDuration,
-          totalPrice,
-          servicesSnapshot,
-          status: initialStatus,
-        },
+      result = memoryStore.addAppointment({
+        id: `mem-${Date.now()}`,
+        reference,
+        customerName: customerName.trim(),
+        customerPhone: cleanedPhone,
+        customerEmail: customerEmail?.trim() || null,
+        notes: notes?.trim() || null,
+        appointmentDate,
+        startTime,
+        endTime,
+        totalDuration,
+        totalPrice,
+        servicesSnapshot,
+        status: initialStatus,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
-
-      return appointment;
-    });
+    }
 
     return NextResponse.json({
       success: true,

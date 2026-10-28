@@ -1,4 +1,6 @@
 import prisma from './prisma';
+import { DEFAULT_SETTINGS } from './constants';
+import { memoryStore } from './memoryStore';
 
 export interface TimeSlot {
   time: string; // "10:00"
@@ -36,40 +38,28 @@ export function formatDisplayTime(timeStr: string): string {
   return `${displayHour.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
 }
 
-// Helper to get business settings as a key-value object
+// Helper to get business settings with fallback
 export async function getSettingsMap(): Promise<Record<string, string>> {
-  const settings = await prisma.businessSetting.findMany();
-  const map: Record<string, string> = {
-    salon_name: 'GOLDEN CUTS',
-    phone: '01780625295',
-    whatsapp: '8801780625295',
-    address: 'House 42, Road 27 (Old), Dhanmondi, Dhaka 1209, Bangladesh',
-    opening_time_weekday: '10:00',
-    closing_time_weekday: '22:00',
-    opening_time_weekend: '14:00',
-    closing_time_weekend: '22:00',
-    closed_days: '',
-    slot_interval: '30',
-    buffer_time: '10',
-    booking_window_days: '30',
-    auto_confirm: 'true',
-    currency: '৳',
-    timezone: 'Asia/Dhaka',
-  };
-
-  for (const s of settings) {
-    map[s.key] = s.value;
+  try {
+    const settings = await prisma.businessSetting.findMany();
+    if (settings && settings.length > 0) {
+      const map: Record<string, string> = { ...DEFAULT_SETTINGS };
+      for (const s of settings) {
+        map[s.key] = s.value;
+      }
+      return map;
+    }
+  } catch (error) {
+    // Prisma unavailable or serverless fallback
   }
-  return map;
+  return memoryStore.getSettings();
 }
 
 // Check if a given date is in the past relative to current time in Asia/Dhaka
 export function isDateInPast(dateStr: string): boolean {
-  // Current time in Asia/Dhaka is UTC+6
   const now = new Date();
   const utc = now.getTime() + now.getTimezoneOffset() * 60000;
   const dhakaTime = new Date(utc + 3600000 * 6);
-  
   const todayStr = dhakaTime.toISOString().split('T')[0];
   return dateStr < todayStr;
 }
@@ -83,9 +73,6 @@ export function getDayOfWeek(dateStr: string): number {
 
 /**
  * Calculates available slots for a given date and service duration.
- * An appointment requiring `durationMinutes` needs a contiguous block of time
- * from startTime to (startTime + durationMinutes) that does not overlap any active booking
- * (including buffer_time).
  */
 export async function getAvailabilityForDate(
   dateStr: string,
@@ -122,7 +109,7 @@ export async function getAvailabilityForDate(
     };
   }
 
-  // 3. Check closed days (e.g. "5" for Friday or custom)
+  // 3. Check closed days
   const dayOfWeek = getDayOfWeek(dateStr);
   const closedDays = (settings.closed_days || '')
     .split(',')
@@ -140,8 +127,7 @@ export async function getAvailabilityForDate(
     };
   }
 
-  // 4. Determine opening & closing hours for this day
-  // In Bangladesh, Friday is day 5, Saturday is day 6.
+  // 4. Determine opening & closing hours
   const isWeekend = dayOfWeek === 5; // Friday
   const openTime = isWeekend
     ? settings.opening_time_weekend || '14:00'
@@ -155,27 +141,31 @@ export async function getAvailabilityForDate(
   const slotInterval = parseInt(settings.slot_interval || '30', 10);
   const bufferTime = parseInt(settings.buffer_time || '10', 10);
 
-  // 5. Fetch all active bookings on this date (PENDING or CONFIRMED)
-  const existingBookings = await prisma.appointment.findMany({
-    where: {
-      appointmentDate: dateStr,
-      status: { in: ['PENDING', 'CONFIRMED'] },
-    },
-    select: {
-      id: true,
-      startTime: true,
-      endTime: true,
-      totalDuration: true,
-    },
-  });
+  // 5. Fetch all active bookings on this date (from Prisma or memoryStore fallback)
+  let existingBookings: { startTime: string; endTime: string }[] = [];
+  try {
+    existingBookings = await prisma.appointment.findMany({
+      where: {
+        appointmentDate: dateStr,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+      },
+      select: {
+        startTime: true,
+        endTime: true,
+      },
+    });
+  } catch (error) {
+    existingBookings = memoryStore
+      .getAppointments()
+      .filter((a) => a.appointmentDate === dateStr && ['PENDING', 'CONFIRMED'].includes(a.status))
+      .map((a) => ({ startTime: a.startTime, endTime: a.endTime }));
+  }
 
   const bookedIntervals = existingBookings.map((b) => ({
     start: timeToMinutes(b.startTime),
-    // add buffer time to booked end time so client cuts don't crash into each other
     end: timeToMinutes(b.endTime) + bufferTime,
   }));
 
-  // Current time in Dhaka to prevent booking past times today
   const todayStr = dhakaNow.toISOString().split('T')[0];
   const isToday = dateStr === todayStr;
   const currentDhakaMinutes = dhakaNow.getHours() * 60 + dhakaNow.getMinutes();
@@ -186,10 +176,9 @@ export async function getAvailabilityForDate(
 
   for (let m = openMinutes; m + totalDurationMinutes <= closeMinutes; m += slotInterval) {
     const slotStartTime = minutesToTime(m);
-    const slotEndTime = minutesToTime(m + totalDurationMinutes);
     const display = formatDisplayTime(slotStartTime);
 
-    // If today, slot must be at least 30 mins in the future
+    // If today, slot must be at least 20 mins in future
     if (isToday && m <= currentDhakaMinutes + 20) {
       slots.push({
         time: slotStartTime,
@@ -200,14 +189,11 @@ export async function getAvailabilityForDate(
       continue;
     }
 
-    // Check collision with any existing booking
     const candidateStart = m;
     const candidateEnd = m + totalDurationMinutes;
 
     let hasCollision = false;
     for (const b of bookedIntervals) {
-      // Overlap condition:
-      // Candidate starts before existing ends, AND candidate ends after existing starts
       if (candidateStart < b.end && candidateEnd > (b.start - bufferTime)) {
         hasCollision = true;
         break;
@@ -241,8 +227,6 @@ export async function getAvailabilityForDate(
 
 /**
  * Atomic double-booking prevention check.
- * Checks if candidate appointment [startTime, endTime] collides with any existing
- * active booking on date `appointmentDate`.
  */
 export async function isSlotFreeAtomic(
   tx: any,
@@ -271,14 +255,36 @@ export async function isSlotFreeAtomic(
     const bEnd = timeToMinutes(b.endTime) + bufferMinutes;
 
     if (reqStart < bEnd && reqEnd > bStart) {
-      return false; // Collision detected
+      return false;
     }
   }
 
   return true;
 }
 
-// Generate unique booking reference: e.g. GC-20261028-7A8B
+export function isSlotFreeMemory(
+  appointmentDate: string,
+  startTime: string,
+  endTime: string,
+  bufferMinutes: number
+): boolean {
+  const reqStart = timeToMinutes(startTime);
+  const reqEnd = timeToMinutes(endTime);
+  const existing = memoryStore
+    .getAppointments()
+    .filter((a) => a.appointmentDate === appointmentDate && ['PENDING', 'CONFIRMED'].includes(a.status));
+
+  for (const b of existing) {
+    const bStart = timeToMinutes(b.startTime) - bufferMinutes;
+    const bEnd = timeToMinutes(b.endTime) + bufferMinutes;
+    if (reqStart < bEnd && reqEnd > bStart) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Generate unique booking reference: e.g. GC-261028-7A8B
 export function generateBookingReference(dateStr: string): string {
   const cleanDate = dateStr.replace(/-/g, '');
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';

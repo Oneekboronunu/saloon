@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
+import { memoryStore } from '@/lib/memoryStore';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,34 +18,42 @@ export async function GET(request: NextRequest) {
     const date = searchParams.get('date')?.trim();
     const exportCsv = searchParams.get('export') === 'csv';
 
-    const where: any = {};
+    let appointments: any[] = [];
 
-    if (status && status !== 'ALL') {
-      where.status = status;
+    try {
+      const where: any = {};
+      if (status && status !== 'ALL') where.status = status;
+      if (date) where.appointmentDate = date;
+      if (search) {
+        where.OR = [
+          { customerName: { contains: search } },
+          { customerPhone: { contains: search } },
+          { reference: { contains: search.toUpperCase() } },
+          { customerEmail: { contains: search } },
+        ];
+      }
+
+      appointments = await prisma.appointment.findMany({
+        where,
+        orderBy: [{ appointmentDate: 'desc' }, { startTime: 'desc' }],
+      });
+    } catch {
+      // Memory fallback
+      let list = memoryStore.getAppointments();
+      if (status && status !== 'ALL') list = list.filter((a) => a.status === status);
+      if (date) list = list.filter((a) => a.appointmentDate === date);
+      if (search) {
+        const q = search.toLowerCase();
+        list = list.filter(
+          (a) =>
+            a.customerName.toLowerCase().includes(q) ||
+            a.customerPhone.includes(q) ||
+            a.reference.toLowerCase().includes(q)
+        );
+      }
+      appointments = list;
     }
 
-    if (date) {
-      where.appointmentDate = date;
-    }
-
-    if (search) {
-      where.OR = [
-        { customerName: { contains: search } },
-        { customerPhone: { contains: search } },
-        { reference: { contains: search.toUpperCase() } },
-        { customerEmail: { contains: search } },
-      ];
-    }
-
-    const appointments = await prisma.appointment.findMany({
-      where,
-      orderBy: [
-        { appointmentDate: 'desc' },
-        { startTime: 'desc' },
-      ],
-    });
-
-    // If CSV export requested:
     if (exportCsv) {
       const headers = [
         'Reference',
@@ -80,7 +89,7 @@ export async function GET(request: NextRequest) {
           a.totalPrice,
           `"${a.status}"`,
           `"${services.replace(/"/g, '""')}"`,
-          `"${a.createdAt.toISOString()}"`,
+          `"${new Date(a.createdAt).toISOString()}"`,
         ];
         csvRows.push(row.join(','));
       }

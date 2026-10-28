@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { getSettingsMap } from '@/lib/bookingEngine';
+import { memoryStore } from '@/lib/memoryStore';
 import { Scissors, CheckCircle2, Clock, Phone, MapPin, Calendar, ArrowLeft, MessageCircle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -14,12 +15,20 @@ interface BookingDetailPageProps {
 export default async function BookingDetailPage({ params }: BookingDetailPageProps) {
   const reference = params.reference.toUpperCase().trim();
 
-  const [appointment, settings] = await Promise.all([
-    prisma.appointment.findUnique({
+  let appointment: any = null;
+  const settings = await getSettingsMap();
+
+  try {
+    appointment = await prisma.appointment.findUnique({
       where: { reference },
-    }),
-    getSettingsMap(),
-  ]);
+    });
+  } catch (error) {
+    // Fallback to memoryStore
+  }
+
+  if (!appointment) {
+    appointment = memoryStore.findAppointmentByRef(reference);
+  }
 
   if (!appointment) {
     notFound();
@@ -36,7 +45,6 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
   return (
     <div className="min-h-screen bg-[#0B0B0B] text-[#F5F2EA] py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
       <div className="max-w-lg w-full">
-        {/* Back Link */}
         <Link
           href="/"
           className="inline-flex items-center space-x-2 text-xs text-[#A6A6A6] hover:text-[#C8A24D] transition mb-6"
@@ -45,7 +53,6 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
           <span>Back to Homepage</span>
         </Link>
 
-        {/* Card */}
         <div className="bg-[#141414] border border-[#C8A24D]/40 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
           <div className="flex items-center justify-between pb-4 border-b border-[#222]">
             <div className="flex items-center space-x-2.5">
@@ -75,7 +82,6 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
             </span>
           </div>
 
-          {/* Reference display */}
           <div className="my-5 p-4 rounded-xl bg-[#0B0B0B] border border-[#262626] text-center">
             <span className="text-[10px] uppercase tracking-widest text-[#737373] block mb-1">
               Booking Reference
@@ -85,7 +91,6 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
             </span>
           </div>
 
-          {/* Details */}
           <div className="space-y-3 text-xs sm:text-sm py-2 border-b border-[#222]">
             <div className="flex justify-between">
               <span className="text-[#A6A6A6]">Customer Name:</span>
@@ -113,7 +118,6 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
             </div>
           </div>
 
-          {/* Services list */}
           <div className="py-4 border-b border-[#222]">
             <span className="text-[10px] uppercase tracking-wider text-[#737373] block mb-2">
               Reserved Services
@@ -132,7 +136,6 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
             </div>
           </div>
 
-          {/* WhatsApp Support CTA */}
           <div className="pt-5 flex flex-col gap-3">
             <a
               href={`https://wa.me/${whatsapp}?text=${waText}`}
