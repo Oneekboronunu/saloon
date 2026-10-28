@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Calendar, ArrowDown, Scissors, Clock, ShieldCheck, Play, Pause, Volume2, VolumeX, X, Maximize2 } from 'lucide-react';
+import { Calendar, ArrowDown, Scissors, Clock, ShieldCheck, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
 interface HeroProps {
   salonName?: string;
@@ -13,10 +13,8 @@ export default function Hero({
   tagline = 'YOUR STYLE. YOUR SIGNATURE.',
 }: HeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const modalVideoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     // Force muted and autoplay programmatically for maximum mobile/desktop browser compatibility
@@ -50,23 +48,6 @@ export default function Hero({
     const nextMuted = !videoRef.current.muted;
     videoRef.current.muted = nextMuted;
     setIsMuted(nextMuted);
-  };
-
-  const openModal = () => {
-    setShowModal(true);
-    // Pause background video to save resources
-    if (videoRef.current) {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    // Resume background video
-    if (videoRef.current) {
-      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-    }
   };
 
   return (
@@ -145,16 +126,6 @@ export default function Hero({
           >
             <span>EXPLORE OUR SERVICES</span>
           </a>
-
-          {/* Quick Watch Reel Button */}
-          <button
-            onClick={openModal}
-            type="button"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-4 rounded-xl bg-[#0B0B0B]/80 hover:bg-[#151515] backdrop-blur-md text-[#C8A24D] border border-[#C8A24D]/40 hover:border-[#C8A24D] font-semibold text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg"
-          >
-            <Play className="w-4 h-4 fill-[#C8A24D]" />
-            <span>WATCH REEL (HD)</span>
-          </button>
         </div>
 
         {/* Trust & Craft Indicators */}
@@ -195,12 +166,12 @@ export default function Hero({
               {isPlaying ? (
                 <>
                   <Pause className="w-3.5 h-3.5 text-[#C8A24D]" />
-                  <span className="text-[11px] text-[#A6A6A6] font-medium">Pause Background</span>
+                  <span className="text-[11px] text-[#A6A6A6] font-medium">Pause Video</span>
                 </>
               ) : (
                 <>
                   <Play className="w-3.5 h-3.5 text-[#C8A24D] fill-[#C8A24D]" />
-                  <span className="text-[11px] text-[#C8A24D] font-medium">Play Background</span>
+                  <span className="text-[11px] text-[#C8A24D] font-medium">Play Video</span>
                 </>
               )}
             </button>
@@ -230,64 +201,6 @@ export default function Hero({
           </a>
         </div>
       </div>
-
-      {/* ================= FULLSCREEN / MODAL VIDEO VIEWER ================= */}
-      {showModal && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300"
-          onClick={closeModal}
-        >
-          <div 
-            className="relative w-full max-w-4xl bg-[#151515] border border-[#C8A24D]/40 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(200,162,77,0.25)]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#262626] bg-[#0E0E0E]">
-              <div className="flex items-center space-x-2">
-                <Scissors className="w-4 h-4 text-[#C8A24D]" />
-                <span className="font-serif font-bold text-sm text-[#F5F2EA] tracking-wider">
-                  GOLDEN CUTS — CRAFTSMANSHIP REEL
-                </span>
-              </div>
-              <button
-                onClick={closeModal}
-                className="w-8 h-8 rounded-lg bg-[#1B1B1B] hover:bg-[#252525] border border-[#333] flex items-center justify-center text-[#A6A6A6] hover:text-white transition"
-                aria-label="Close video"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Video Player in Modal */}
-            <div className="relative aspect-video w-full bg-black">
-              <video
-                ref={modalVideoRef}
-                controls
-                autoPlay
-                playsInline
-                className="w-full h-full object-contain"
-                src="/videos/hero.mp4"
-              >
-                <source src="/videos/hero.mp4" type="video/mp4" />
-                <source src="https://api-f.streamable.com/api/v1/videos/akquln/mp4" type="video/mp4" />
-                Your browser does not support HTML5 video.
-              </video>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-4 bg-[#0E0E0E] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#A6A6A6]">
-              <span>Direct Stream: <a href="https://streamable.com/akquln" target="_blank" rel="noopener noreferrer" className="text-[#C8A24D] underline hover:text-white">streamable.com/akquln</a></span>
-              <a
-                href="#booking"
-                onClick={closeModal}
-                className="px-4 py-2 rounded-lg bg-[#C8A24D] text-[#0B0B0B] font-bold tracking-wider hover:bg-[#D8B45E] transition"
-              >
-                BOOK THIS CUT NOW
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
