@@ -47,14 +47,18 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full">
         {/* Brand header */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-[#141414] border border-[#C8A24D]/40 flex items-center justify-center text-[#C8A24D] mx-auto mb-3 shadow-lg">
-            <Scissors className="w-6 h-6" />
+          <div className="relative w-20 h-20 mx-auto mb-3 p-1">
+            <img
+              src="/images/logo.png"
+              alt="GOLDEN CUTS"
+              className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(200,162,77,0.4)]"
+            />
           </div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-[#F5F2EA]">
             GOLDEN CUTS
           </h1>
-          <p className="text-xs text-[#A6A6A6] uppercase tracking-[0.2em] mt-1 font-mono">
-            Administration Portal
+          <p className="text-xs text-[#C8A24D] uppercase tracking-[0.25em] mt-1 font-medium">
+            Executive Portal
           </p>
         </div>
 

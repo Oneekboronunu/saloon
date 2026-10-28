@@ -90,3 +90,34 @@ button, a {
   min-height: 44px;
   min-width: 44px;
 }
+
+@keyframes loaderSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-loader-slide {
+  animation: loaderSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes goldPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px rgba(200, 162, 77, 0.4));
+  }
+  50% {
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 30px rgba(200, 162, 77, 0.7));
+  }
+}
+
+.animate-gold-pulse {
+  animation: goldPulse 2s ease-in-out infinite;
+}

@@ -33,9 +33,19 @@ export const metadata: Metadata = {
     siteName: 'GOLDEN CUTS',
   },
   icons: {
-    icon: '/icon.svg',
+    icon: [
+      { url: '/icon.png', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/favicon.png',
   },
 };
+
+import SiteLoader from '@/components/barber/SiteLoader';
 
 export default function RootLayout({
   children,
@@ -53,6 +63,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#0B0B0B] text-[#F5F2EA] min-h-screen antialiased selection:bg-[#C8A24D] selection:text-[#0B0B0B]">
+        <SiteLoader />
         {children}
         <WhatsAppButton />
       </body>

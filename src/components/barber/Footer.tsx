@@ -22,8 +22,12 @@ export default function Footer({
           {/* Col 1: Brand */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#151515] border border-[#C8A24D]/30 flex items-center justify-center text-[#C8A24D]">
-                <Scissors className="w-4 h-4" />
+              <div className="relative w-9 h-9 rounded-xl bg-[#141414] border border-[#C8A24D]/35 flex items-center justify-center p-1 overflow-hidden shadow-md">
+                <img
+                  src="/images/logo-nav.png"
+                  alt="Golden Cuts Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="font-serif tracking-widest text-lg font-bold text-[#F5F2EA]">
                 {salonName}

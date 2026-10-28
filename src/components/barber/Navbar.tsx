@@ -47,8 +47,12 @@ export default function Navbar({
             href="/"
             className="flex items-center space-x-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24D]"
           >
-            <div className="w-9 h-9 rounded-lg bg-[#151515] border border-[#C8A24D]/30 flex items-center justify-center text-[#C8A24D] group-hover:border-[#C8A24D] transition-colors">
-              <Scissors className="w-5 h-5 transition-transform group-hover:rotate-45" />
+            <div className="relative w-10 h-10 rounded-xl bg-[#141414] border border-[#C8A24D]/35 flex items-center justify-center p-1 group-hover:border-[#C8A24D] group-hover:shadow-[0_0_18px_rgba(200,162,77,0.35)] transition-all overflow-hidden">
+              <img
+                src="/images/logo-nav.png"
+                alt="Golden Cuts Logo"
+                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+              />
             </div>
             <div className="flex flex-col">
               <span className="font-serif tracking-widest text-lg sm:text-xl font-bold text-[#F5F2EA] group-hover:text-[#C8A24D] transition-colors">
