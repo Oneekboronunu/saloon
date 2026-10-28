@@ -93,7 +93,7 @@ export default function Hero({
         <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#151515]/90 backdrop-blur-md border border-[#C8A24D]/40 mb-6 sm:mb-8 animate-in fade-in duration-500 shadow-2xl">
           <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
           <span className="text-[11px] sm:text-xs font-medium uppercase tracking-[0.2em] text-[#C8A24D]">
-            Dhanmondi, Dhaka • Appointments Open
+            North Patenga, Chattogram • Appointments Open
           </span>
         </div>
 

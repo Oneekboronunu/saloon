@@ -13,12 +13,13 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: 'GOLDEN CUTS — Premium Men’s Barbershop & Grooming Salon',
   description:
-    'Experience bespoke barbering in Dhaka. Precision haircuts, skin fades, sculpted beard shaping, and hot towel treatments by master craftsmen.',
+    'Experience bespoke barbering in Chattogram. Precision haircuts, skin fades, sculpted beard shaping, and hot towel treatments by master craftsmen in North Patenga.',
   keywords: [
     'Golden Cuts',
-    'Barbershop Dhaka',
-    'Men Salon Dhanmondi',
-    'Skin Fade Dhaka',
+    'Barbershop Chattogram',
+    'Men Salon Patenga',
+    'Steel Mill Saloon',
+    'Skin Fade Chattogram',
     'Beard Trim Bangladesh',
     'Luxury Grooming Salon',
     'Online Barber Booking',
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'GOLDEN CUTS — Premium Men’s Barbershop & Grooming Salon',
     description:
-      'Precision cuts. Refined grooming. A better version of you. Real-time online appointment scheduling in Dhanmondi, Dhaka.',
+      'Precision cuts. Refined grooming. A better version of you. Real-time online appointment scheduling in North Patenga, Chattogram.',
     type: 'website',
     locale: 'en_BD',
     siteName: 'GOLDEN CUTS',

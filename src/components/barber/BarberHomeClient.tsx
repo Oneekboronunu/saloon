@@ -41,7 +41,7 @@ export default function BarberHomeClient({
   const salonName = settings.salon_name || 'GOLDEN CUTS';
   const salonPhone = settings.phone || '01780625295';
   const whatsappNumber = settings.whatsapp || '8801780625295';
-  const salonAddress = settings.address || 'House 42, Road 27 (Old), Dhanmondi, Dhaka 1209, Bangladesh';
+  const salonAddress = settings.address || 'Housing Colony Road, Steel Mill, North Patenga, Chattogram, Bangladesh';
   const currency = settings.currency || '৳';
 
   return (

@@ -60,7 +60,7 @@ export default function BookingWizard({
   currency = '৳',
   salonPhone = '01780625295',
   whatsappNumber = '8801780625295',
-  salonAddress = 'House 42, Road 27 (Old), Dhanmondi, Dhaka',
+  salonAddress = 'Housing Colony Road, Steel Mill, North Patenga, Chattogram',
 }: BookingWizardProps) {
   // Current active step in wizard: 1=Services, 2=Date, 3=Time, 4=Details, 5=Summary/Confirmed
   const [step, setStep] = useState<number>(1);

@@ -1,6 +1,6 @@
 # GOLDEN CUTS — Premium Men's Barbershop & Grooming Salon
 
-A production-ready website, real-time appointment booking system, and protected administrative dashboard built for **GOLDEN CUTS** barbershop in Dhanmondi, Dhaka.
+A production-ready website, real-time appointment booking system, and protected administrative dashboard built for **GOLDEN CUTS** barbershop in North Patenga, Chattogram.
 
 ---
 

@@ -13,7 +13,7 @@ interface FooterProps {
 export default function Footer({
   salonName = 'GOLDEN CUTS',
   phone = '01780625295',
-  address = 'House 42, Road 27 (Old), Dhanmondi, Dhaka',
+  address = 'Housing Colony Road, Steel Mill, North Patenga, Chattogram',
 }: FooterProps) {
   return (
     <footer className="bg-[#070707] border-t border-[#1C1C1C] text-[#A6A6A6] pt-16 pb-12 px-4 sm:px-6 lg:px-8">
@@ -35,7 +35,7 @@ export default function Footer({
             <div className="flex items-center space-x-4 pt-1 text-xs">
               <span className="flex items-center space-x-1.5">
                 <MapPin className="w-3.5 h-3.5 text-[#C8A24D]" />
-                <span>Dhanmondi, Dhaka</span>
+                <span>North Patenga, Chattogram</span>
               </span>
               <span>•</span>
               <span className="flex items-center space-x-1.5">
