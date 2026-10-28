@@ -1,69 +1,50 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
+  darkMode: ['class'],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
-        retro777: {
-          header: "#FBF3DE",
-          cream: "#FEF9E7",
-          parchment: "#F5EAD0",
-          burgundy: "#BA2649",
-          burgundyHover: "#A11D3C",
-          cherry: "#D1345B",
-          teal: "#0D9488",
-          tealHover: "#0F766E",
-          gold: "#F59E0B",
-          goldLight: "#FDE047",
-          brown: "#3E1F17",
-          dark: "#120B10",
-          cardDark: "#1C141B",
-          cardBorder: "#342230",
-          border: "#EADDC3",
+        gold: {
+          50: '#FBF8F0',
+          100: '#F6EFDC',
+          200: '#EBDCB4',
+          300: '#DFC789',
+          400: '#D5B664',
+          DEFAULT: '#C8A24D', // Sophisticated metallic gold
+          hover: '#D8B45E',
+          dark: '#9A7A31',
+          border: 'rgba(200, 162, 77, 0.22)',
+          borderStrong: 'rgba(200, 162, 77, 0.45)',
+          glow: 'rgba(200, 162, 77, 0.15)',
         },
-        casino: {
-          bg: "#0B0F1A",
-          dark: "#080B12",
-          surface: "#101726",
-          card: "#151F32",
-          cardHover: "#1B273F",
-          border: "#23334E",
-          borderLight: "#2E4366",
-          muted: "#8A99AD",
-          gold: {
-            DEFAULT: "#D4AF37",
-            light: "#EBD07B",
-            hover: "#E0BF4E",
-            dark: "#A3821C",
-          },
-          emerald: {
-            DEFAULT: "#10B981",
-            light: "#34D399",
-            dark: "#059669",
-            glow: "rgba(16, 185, 129, 0.15)",
-          },
-          crimson: {
-            DEFAULT: "#EF4444",
-            light: "#F87171",
-            dark: "#DC2626",
-          },
+        dark: {
+          base: '#0B0B0B',     // Deep matte black primary background
+          surface: '#151515',  // Charcoal secondary background
+          card: '#181818',     // Card surface
+          cardHover: '#1F1F1F',// Card hover
+          border: '#262626',   // Subtle border
+          borderLight: '#333333',
+        },
+        text: {
+          primary: '#F5F2EA',   // Warm white
+          secondary: '#A6A6A6', // Muted gray
+          muted: '#737373',
         },
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "Inter", "system-ui", "-apple-system", "sans-serif"],
-        display: ["var(--font-display)", "Cabinet Grotesk", "Inter", "sans-serif"],
-        retro: ["var(--font-retro)", "Impact", "Arial Black", "sans-serif"],
-        serif: ["Georgia", "Merriweather", "serif"],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        serif: ['Georgia', 'Cambria', '"Times New Roman"', 'serif'],
+        display: ['Cinzel', 'Playfair Display', 'Georgia', 'serif'],
       },
       boxShadow: {
-        retro: "0 4px 0 0 #871630",
-        retroTeal: "0 4px 0 0 #095952",
-        card: "0 8px 30px rgba(0,0,0,0.3)",
+        gold: '0 4px 20px -2px rgba(200, 162, 77, 0.2)',
+        'gold-lg': '0 10px 30px -4px rgba(200, 162, 77, 0.3)',
+        subtle: '0 2px 10px rgba(0, 0, 0, 0.5)',
       },
     },
   },

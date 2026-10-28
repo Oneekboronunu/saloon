@@ -1,97 +1,116 @@
-import { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import prisma from "@/lib/prisma";
+import crypto from 'crypto';
+import { cookies } from 'next/headers';
+import prisma from './prisma';
+import bcrypt from 'bcryptjs';
 
-export const authOptions: NextAuthOptions = {
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-  pages: {
-    signIn: "/auth/signin",
-  },
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        identifier: { label: "Email or Phone", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.identifier || !credentials?.password) {
-          throw new Error("Please enter your email/phone and password");
-        }
+const JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'golden_cuts_fallback_secure_key_2026';
+const COOKIE_NAME = 'gc_admin_token';
 
-        const identifier = credentials.identifier.trim().toLowerCase();
+export interface AdminPayload {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  exp: number;
+}
 
-        // Search user by email or phone
-        const user = await prisma.user.findFirst({
-          where: {
-            OR: [
-              { email: identifier },
-              { phone: credentials.identifier.trim() },
-            ],
-          },
-        });
+// Lightweight, zero-dependency HMAC-SHA256 JWT implementation
+export function signToken(payload: Omit<AdminPayload, 'exp'>, expiresInSeconds = 86400 * 7): string {
+  const header = { alg: 'HS256', typ: 'JWT' };
+  const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
+  const fullPayload: AdminPayload = { ...payload, exp };
 
-        if (!user) {
-          throw new Error("No account found with these credentials");
-        }
+  const encodeBase64Url = (obj: object) =>
+    Buffer.from(JSON.stringify(obj))
+      .toString('base64')
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
 
-        const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
-        if (!isValid) {
-          // Check for demo fallback
-          if (credentials.password === "demo123" || credentials.password === "admin123") {
-            // allowed for demo ease
-          } else {
-            throw new Error("Invalid password");
-          }
-        }
+  const b64Header = encodeBase64Url(header);
+  const b64Payload = encodeBase64Url(fullPayload);
+  const data = `${b64Header}.${b64Payload}`;
 
+  const signature = crypto
+    .createHmac('sha256', JWT_SECRET)
+    .update(data)
+    .digest('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          balance: user.balance,
-          bonusBalance: user.bonusBalance,
-          currency: user.currency,
-          isVerified: user.isVerified,
-        } as any;
-      },
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
-        token.id = user.id;
-        token.role = (user as any).role;
-        token.balance = (user as any).balance;
-        token.bonusBalance = (user as any).bonusBalance;
-        token.currency = (user as any).currency;
-        token.isVerified = (user as any).isVerified;
-      }
+  return `${data}.${signature}`;
+}
 
-      if (trigger === "update" && session) {
-        if (session.balance !== undefined) token.balance = session.balance;
-        if (session.bonusBalance !== undefined) token.bonusBalance = session.bonusBalance;
-      }
+export function verifyToken(token: string): AdminPayload | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
 
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user && token) {
-        (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
-        (session.user as any).balance = token.balance;
-        (session.user as any).bonusBalance = token.bonusBalance;
-        (session.user as any).currency = token.currency;
-        (session.user as any).isVerified = token.isVerified;
-      }
-      return session;
-    },
-  },
-  secret: process.env.AUTH_SECRET || "aura_casino_master_jwt_secret_key_2026_xyz",
-};
+    const [b64Header, b64Payload, signature] = parts;
+    const data = `${b64Header}.${b64Payload}`;
+
+    const expectedSig = crypto
+      .createHmac('sha256', JWT_SECRET)
+      .update(data)
+      .digest('base64')
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
+
+    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig))) {
+      return null;
+    }
+
+    const payload: AdminPayload = JSON.parse(
+      Buffer.from(b64Payload, 'base64').toString('utf8')
+    );
+
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+      return null; // Expired
+    }
+
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export async function verifyAdminCredentials(email: string, password: string) {
+  const admin = await prisma.adminUser.findUnique({
+    where: { email: email.toLowerCase().trim() },
+  });
+
+  if (!admin) return null;
+
+  const valid = await bcrypt.compare(password, admin.passwordHash);
+  if (!valid) return null;
+
+  return {
+    id: admin.id,
+    email: admin.email,
+    name: admin.name,
+    role: admin.role,
+  };
+}
+
+export async function getAdminSession(): Promise<AdminPayload | null> {
+  try {
+    const cookieStore = cookies();
+    const token = cookieStore.get(COOKIE_NAME)?.value;
+    if (!token) return null;
+    return verifyToken(token);
+  } catch {
+    return null;
+  }
+}
+
+export function getAdminCookieHeader(token: string) {
+  return `${COOKIE_NAME}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}${
+    process.env.NODE_ENV === 'production' ? '; Secure' : ''
+  }`;
+}
+
+export function getAdminLogoutCookieHeader() {
+  return `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
+}

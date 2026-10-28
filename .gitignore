@@ -5,6 +5,7 @@
 
 # Testing
 /coverage
+scratch/
 
 # Next.js build output
 /.next/
@@ -35,5 +36,6 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# SQLite Database (optional to ignore or keep dev.db)
+# SQLite Database
+prisma/dev.db
 prisma/dev.db-journal

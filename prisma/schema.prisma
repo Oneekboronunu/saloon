@@ -4,152 +4,58 @@ datasource db {
 }
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
-model User {
-  id                String         @id @default(cuid())
-  email             String         @unique
-  phone             String?        @unique
-  name              String
-  passwordHash      String
-  role              String         @default("USER") // USER, VIP, ADMIN
-  balance           Float          @default(15000.0)
-  bonusBalance      Float          @default(1000.0)
-  currency          String         @default("BDT")
-  avatar            String?
-  referralCode      String?        @unique
-  referredBy        String?
-  isVerified        Boolean        @default(true)
-  depositLimit      Float?
-  lossLimit         Float?
-  selfExcludedUntil DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-
-  transactions      Transaction[]
-  bets              Bet[]
-  casinoRounds      CasinoRound[]
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-model Transaction {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type          String    // DEPOSIT, WITHDRAWAL, BET_PLACED, BET_WIN, CASINO_WIN, BONUS_CLAIM
-  amount        Float
-  fee           Float     @default(0.0)
-  method        String    // bKash, Nagad, Rocket, Bank Transfer, System
-  accountNumber String?
-  txId          String?
-  status        String    @default("COMPLETED") // PENDING, COMPLETED, REJECTED
-  note          String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+model Service {
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  price           Float
+  durationMinutes Int
+  category        String   @default("HAIRCUT") // HAIRCUT, BEARD, PACKAGE, COMBO, STYLING
+  imageUrl        String?
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
-model SportMatch {
-  id              String      @id @default(cuid())
-  sport           String      // CRICKET, FOOTBALL
-  tournament      String      // IPL 2026, BPL 2026, Premier League, UEFA Champions League, etc.
-  homeTeam        String
-  awayTeam        String
-  homeTeamCode    String
-  awayTeamCode    String
-  homeScore       String      @default("0")
-  awayScore       String      @default("0")
-  status          String      @default("LIVE") // LIVE, UPCOMING, FINISHED, CANCELLED
-  matchTime       String      @default("Today 19:30")
-  venue           String
-  liveMinute      String?     // "14.4 Ov", "67'", "HT"
-  liveSummary     String?     // "142/3 (CRR 9.68)" or "Shots: 11-7, Corners: 6-2"
-  isHot           Boolean     @default(true)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+model Appointment {
+  id               String   @id @default(cuid())
+  reference        String   @unique
+  customerName     String
+  customerPhone    String
+  customerEmail    String?
+  notes            String?
+  appointmentDate  String   // Format: YYYY-MM-DD
+  startTime        String   // Format: HH:mm
+  endTime          String   // Format: HH:mm
+  totalDuration    Int      // Total duration in minutes
+  totalPrice       Float    // Total price in BDT
+  servicesSnapshot String   // JSON array of service snapshots: [{ id, name, price, durationMinutes }]
+  status           String   @default("CONFIRMED") // PENDING, CONFIRMED, COMPLETED, CANCELLED
+  cancellationReason String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  markets         Market[]
-  betItems        BetItem[]
+  @@index([appointmentDate, status])
+  @@index([customerPhone])
+  @@index([reference])
 }
 
-model Market {
-  id          String      @id @default(cuid())
-  matchId     String
-  match       SportMatch  @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  name        String      // "Match Winner", "Total Goals Over/Under 2.5", "Total Runs Over/Under 178.5", "Correct Score", "First Half Winner"
-  category    String      @default("MAIN") // MAIN, TOTALS, SCORES, HANDICAP, PROPS
-  status      String      @default("OPEN") // OPEN, SUSPENDED, SETTLED
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  outcomes    Outcome[]
-}
-
-model Outcome {
-  id          String      @id @default(cuid())
-  marketId    String
-  market      Market      @relation(fields: [marketId], references: [id], onDelete: Cascade)
-  name        String      // "Kolkata Knight Riders", "Over 2.5", "2 - 1"
-  odds        Float
-  isWinner    Boolean?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  betItems    BetItem[]
-}
-
-model Bet {
-  id              String      @id @default(cuid())
-  userId          String
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type            String      @default("SINGLE") // SINGLE, ACCUMULATOR
-  totalOdds       Float
-  stake           Float
-  potentialPayout Float
-  returnAmount    Float       @default(0.0)
-  status          String      @default("PENDING") // PENDING, WON, LOST, CASHED_OUT
-  isCashedOut     Boolean     @default(false)
-  cashoutValue    Float?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-
-  items           BetItem[]
-}
-
-model BetItem {
-  id          String      @id @default(cuid())
-  betId       String
-  bet         Bet         @relation(fields: [betId], references: [id], onDelete: Cascade)
-  matchId     String?
-  match       SportMatch? @relation(fields: [matchId], references: [id], onDelete: SetNull)
-  outcomeId   String?
-  outcome     Outcome?    @relation(fields: [outcomeId], references: [id], onDelete: SetNull)
-  matchName   String
-  marketName  String
-  outcomeName String
-  odds        Float
-  status      String      @default("PENDING") // PENDING, WON, LOST
-  createdAt   DateTime    @default(now())
-}
-
-model CasinoRound {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  game        String    // AVIATOR, CARROM, ROULETTE, DICE, COINFLIP
-  betAmount   Float
-  multiplier  Float
-  payout      Float
-  isWin       Boolean
-  details     String?   // JSON representation of game round
-  createdAt   DateTime  @default(now())
-}
-
-model Jackpot {
-  id              String    @id @default(cuid())
-  title           String
-  currentAmount   Float
-  lastWinnerName  String?
-  lastWinAmount   Float?
-  updatedAt       DateTime  @updatedAt
+model BusinessSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }
