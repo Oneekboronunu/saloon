@@ -46,6 +46,7 @@ export const metadata: Metadata = {
 };
 
 import SiteLoader from '@/components/barber/SiteLoader';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function RootLayout({
   children,
@@ -63,9 +64,11 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#0B0B0B] text-[#F5F2EA] min-h-screen antialiased selection:bg-[#C8A24D] selection:text-[#0B0B0B]">
-        <SiteLoader />
-        {children}
-        <WhatsAppButton />
+        <LanguageProvider>
+          <SiteLoader />
+          {children}
+          <WhatsAppButton />
+        </LanguageProvider>
       </body>
     </html>
   );

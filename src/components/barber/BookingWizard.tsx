@@ -21,6 +21,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { ServiceItem } from './ServicesSection';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface BookingWizardProps {
   services: ServiceItem[];
@@ -62,6 +63,7 @@ export default function BookingWizard({
   whatsappNumber = '8801780625295',
   salonAddress = 'Housing Colony Road, Steel Mill, North Patenga, Chattogram',
 }: BookingWizardProps) {
+  const { t, language } = useLanguage();
   // Current active step in wizard: 1=Services, 2=Date, 3=Time, 4=Details, 5=Summary/Confirmed
   const [step, setStep] = useState<number>(1);
 
@@ -242,16 +244,27 @@ export default function BookingWizard({
   // WhatsApp confirmation url for client
   const generateWhatsAppConfirmationUrl = () => {
     if (!confirmedBooking) return `https://wa.me/${whatsappNumber}`;
-    const text = encodeURIComponent(
-      `Hello Golden Cuts,\nI have scheduled an appointment.\n\n` +
-      `Booking Ref: ${confirmedBooking.reference}\n` +
-      `Name: ${confirmedBooking.customerName}\n` +
-      `Date: ${confirmedBooking.appointmentDate}\n` +
-      `Time: ${confirmedBooking.startTime} - ${confirmedBooking.endTime}\n` +
-      `Services: ${confirmedBooking.services.map((s) => s.name).join(', ')}\n` +
-      `Total: ${currency}${confirmedBooking.totalPrice}\n\n` +
-      `Please confirm my slot. Thank you!`
-    );
+    const text = language === 'bn'
+      ? encodeURIComponent(
+          `নমস্কার / আসসালামু আলাইকুম গোল্ডেন কাটস,\nআমি একটি অ্যাপয়েন্টমেন্ট বুক করেছি।\n\n` +
+          `বুকিং রেফারেন্স: ${confirmedBooking.reference}\n` +
+          `গ্রাহকের নাম: ${confirmedBooking.customerName}\n` +
+          `তারিখ: ${confirmedBooking.appointmentDate}\n` +
+          `সময়: ${confirmedBooking.startTime} – ${confirmedBooking.endTime}\n` +
+          `সেবা সমূহ: ${confirmedBooking.services.map((s) => s.name).join(', ')}\n` +
+          `মোট মূল্য: ${currency}${confirmedBooking.totalPrice}\n\n` +
+          `অনুগ্রহ করে আমার স্লটটি কনফার্ম করুন। ধন্যবাদ!`
+        )
+      : encodeURIComponent(
+          `Hello Golden Cuts,\nI have scheduled an appointment.\n\n` +
+          `Booking Ref: ${confirmedBooking.reference}\n` +
+          `Name: ${confirmedBooking.customerName}\n` +
+          `Date: ${confirmedBooking.appointmentDate}\n` +
+          `Time: ${confirmedBooking.startTime} - ${confirmedBooking.endTime}\n` +
+          `Services: ${confirmedBooking.services.map((s) => s.name).join(', ')}\n` +
+          `Total: ${currency}${confirmedBooking.totalPrice}\n\n` +
+          `Please confirm my slot. Thank you!`
+        );
     return `https://wa.me/${whatsappNumber}?text=${text}`;
   };
 
@@ -261,14 +274,16 @@ export default function BookingWizard({
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <span className="text-xs uppercase tracking-[0.25em] text-[#C8A24D] font-semibold block mb-2">
-            Online Reservation
+            {language === 'bn' ? 'অনলাইন রিজার্ভেশন' : 'Online Reservation'}
           </span>
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#F5F2EA] tracking-tight">
-            Book Your Appointment
+            {language === 'bn' ? 'অ্যাপয়েন্টমেন্ট বুক করুন' : 'Book Your Appointment'}
           </h2>
           <div className="w-12 h-0.5 bg-[#C8A24D] mx-auto mt-3 mb-3 opacity-70" />
           <p className="text-xs sm:text-sm text-[#A6A6A6]">
-            Real-time scheduling with atomic slot reservation. No queues, no waiting.
+            {language === 'bn' 
+              ? 'সেলুনের রিয়েল-টাইম স্লট বুকিং সিস্টেম। কোনো অযথা ভিড় বা অপেক্ষা নেই।'
+              : 'Real-time scheduling with atomic slot reservation. No queues, no waiting.'}
           </p>
         </div>
 
@@ -280,11 +295,11 @@ export default function BookingWizard({
               <div className="absolute top-1/2 left-6 right-6 -translate-y-1/2 h-0.5 bg-[#262626] -z-0" />
               
               {[
-                { num: 1, label: 'Services' },
-                { num: 2, label: 'Date' },
-                { num: 3, label: 'Time' },
-                { num: 4, label: 'Details' },
-                { num: 5, label: 'Confirm' },
+                { num: 1, label: language === 'bn' ? 'সেবা' : 'Services' },
+                { num: 2, label: language === 'bn' ? 'তারিখ' : 'Date' },
+                { num: 3, label: language === 'bn' ? 'সময়' : 'Time' },
+                { num: 4, label: language === 'bn' ? 'তথ্য' : 'Details' },
+                { num: 5, label: language === 'bn' ? 'নিশ্চিত' : 'Confirm' },
               ].map((s) => {
                 const isActive = step === s.num;
                 const isPassed = step > s.num;

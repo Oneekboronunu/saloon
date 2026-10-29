@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { MapPin, Phone, MessageCircle, Clock, ExternalLink } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface LocationContactProps {
   salonName?: string;
@@ -22,20 +23,34 @@ export default function LocationContact({
   weekdayHours = 'Saturday – Thursday: 10:00 AM – 10:00 PM',
   weekendHours = 'Friday: 02:00 PM – 10:00 PM',
 }: LocationContactProps) {
+  const { t, language } = useLanguage();
+
+  const displayAddress = language === 'bn' 
+    ? 'হাউজিং কলোনি রোড, স্টিল মিল, উত্তর পতেঙ্গা, চট্টগ্রাম, বাংলাদেশ'
+    : address;
+
+  const displayWeekdayHours = language === 'bn'
+    ? 'শনিবার – বৃহস্পতিবার: সকাল ১০:০০ – রাত ১০:০০'
+    : weekdayHours;
+
+  const displayWeekendHours = language === 'bn'
+    ? 'শুক্রবার: দুপুর ০২:০০ – রাত ১০:০০'
+    : weekendHours;
+
   return (
     <section id="location" className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-[#0B0B0B] border-t border-[#1C1C1C]">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-14 sm:mb-20">
           <span className="text-xs uppercase tracking-[0.25em] text-[#C8A24D] font-semibold block mb-2">
-            Visit & Connect
+            {t('location_subtitle')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#F5F2EA] tracking-tight">
-            Location & Contact
+            {t('location_title')}
           </h2>
           <div className="w-14 h-0.5 bg-[#C8A24D] mx-auto mt-3 mb-3 opacity-70" />
           <p className="text-xs sm:text-sm text-[#A6A6A6]">
-            Conveniently situated on Housing Colony Road, Steel Mill, North Patenga, Chattogram.
+            {t('location_desc')}
           </p>
         </div>
 
@@ -44,7 +59,7 @@ export default function LocationContact({
           <div className="p-6 sm:p-8 rounded-2xl bg-[#121212] border border-[#262626] space-y-6">
             <div>
               <span className="text-xs uppercase tracking-widest text-[#C8A24D] font-mono block mb-1">
-                The Salon
+                {language === 'bn' ? 'আমাদের সেলুন' : 'The Salon'}
               </span>
               <h3 className="font-serif text-2xl font-bold text-[#F5F2EA]">
                 {salonName} Barbershop
@@ -57,9 +72,11 @@ export default function LocationContact({
                 <MapPin className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-xs font-semibold text-[#F5F2EA] block">Address</span>
+                <span className="text-xs font-semibold text-[#F5F2EA] block">
+                  {t('location_address_title')}
+                </span>
                 <p className="text-xs sm:text-sm text-[#A6A6A6] mt-0.5 leading-relaxed">
-                  {address}
+                  {displayAddress}
                 </p>
                 <a
                   href={mapUrl}
@@ -67,7 +84,7 @@ export default function LocationContact({
                   rel="noopener noreferrer"
                   className="inline-flex items-center space-x-1 text-xs text-[#C8A24D] hover:underline mt-1.5"
                 >
-                  <span>Open in Google Maps</span>
+                  <span>{language === 'bn' ? 'গুগল ম্যাপে দেখুন' : 'Open in Google Maps'}</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
@@ -79,9 +96,11 @@ export default function LocationContact({
                 <Clock className="w-4 h-4" />
               </div>
               <div className="text-xs sm:text-sm text-[#A6A6A6] space-y-1">
-                <span className="text-xs font-semibold text-[#F5F2EA] block">Opening Hours</span>
-                <p className="text-[#F5F2EA]">{weekdayHours}</p>
-                <p className="text-[#A6A6A6]">{weekendHours}</p>
+                <span className="text-xs font-semibold text-[#F5F2EA] block">
+                  {t('location_hours_title')}
+                </span>
+                <p className="text-[#F5F2EA]">{displayWeekdayHours}</p>
+                <p className="text-[#A6A6A6]">{displayWeekendHours}</p>
               </div>
             </div>
 
@@ -92,17 +111,17 @@ export default function LocationContact({
                 className="flex-1 inline-flex items-center justify-center space-x-2 py-3 px-4 rounded-xl bg-[#1C1C1C] hover:bg-[#252525] border border-[#2B2B2B] text-xs font-bold uppercase tracking-wider text-[#F5F2EA] transition"
               >
                 <Phone className="w-4 h-4 text-[#C8A24D]" />
-                <span>Call: {phone}</span>
+                <span>{language === 'bn' ? 'কল করুন:' : 'Call:'} {phone}</span>
               </a>
 
               <a
-                href={`https://wa.me/${whatsapp}?text=Hello%2C%20I'd%20like%20to%20inquire%20about%20a%20salon%20appointment.`}
+                href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(language === 'bn' ? 'নমস্কার / আসসালামু আলাইকুম, আমি গোল্ডেন কাটস বারবারশপে একটি অ্যাপয়েন্টমেন্ট বুকিং সম্পর্কে জানতে চাচ্ছি।' : "Hello, I'd like to inquire about a salon appointment.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 inline-flex items-center justify-center space-x-2 py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20BA5A] text-white text-xs font-bold uppercase tracking-wider transition shadow-md"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>WhatsApp Chat</span>
+                <span>{language === 'bn' ? 'হোয়াটসঅ্যাপ চ্যাট' : 'WhatsApp Chat'}</span>
               </a>
             </div>
           </div>
@@ -112,9 +131,13 @@ export default function LocationContact({
             <div className="p-4 bg-[#181818] border-b border-[#222] flex items-center justify-between relative z-10">
               <div className="flex items-center space-x-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
-                <span className="text-xs font-semibold text-[#F5F2EA]">Live Location</span>
+                <span className="text-xs font-semibold text-[#F5F2EA]">
+                  {language === 'bn' ? 'সরাসরি লোকেশন' : 'Live Location'}
+                </span>
               </div>
-              <span className="text-[11px] text-[#C8A24D] font-medium">North Patenga, Chattogram</span>
+              <span className="text-[11px] text-[#C8A24D] font-medium">
+                {language === 'bn' ? 'উত্তর পতেঙ্গা, চট্টগ্রাম' : 'North Patenga, Chattogram'}
+              </span>
             </div>
 
             {/* Map Container with Live Interactive Street Map & Luxury Overlay */}
@@ -138,7 +161,7 @@ export default function LocationContact({
                   {salonName} Barbershop
                 </h4>
                 <p className="text-xs text-[#E5E0D8] max-w-xs mb-4 drop-shadow-md font-medium">
-                  {address}
+                  {displayAddress}
                 </p>
                 <a
                   href={mapUrl}
@@ -146,7 +169,7 @@ export default function LocationContact({
                   rel="noopener noreferrer"
                   className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider transition shadow-xl"
                 >
-                  <span>Open in Google Maps Navigation</span>
+                  <span>{t('location_map_btn')}</span>
                   <ExternalLink className="w-3.5 h-3.5 text-[#0B0B0B]" />
                 </a>
               </div>

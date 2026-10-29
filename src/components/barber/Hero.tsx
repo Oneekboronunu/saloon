@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { Calendar, ArrowDown, Scissors, Clock, ShieldCheck } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface HeroProps {
   salonName?: string;
@@ -13,6 +14,7 @@ export default function Hero({
   tagline = 'YOUR STYLE. YOUR SIGNATURE.',
 }: HeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Force muted and autoplay programmatically for seamless cross-browser playback
@@ -71,21 +73,21 @@ export default function Hero({
         <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#151515]/90 backdrop-blur-md border border-[#C8A24D]/40 mb-6 sm:mb-8 animate-in fade-in duration-500 shadow-2xl">
           <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
           <span className="text-[11px] sm:text-xs font-medium uppercase tracking-[0.2em] text-[#C8A24D]">
-            North Patenga, Chattogram • Appointments Open
+            {t('hero_badge')}
           </span>
         </div>
 
         {/* Master Headline with enhanced readability against live video */}
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-[#F5F2EA] tracking-tight leading-[1.12] mb-5 sm:mb-6 drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
-          YOUR STYLE.{' '}
+          {t('hero_headline_1')}{' '}
           <span className="gold-gradient-text block sm:inline">
-            YOUR SIGNATURE.
+            {t('hero_headline_2')}
           </span>
         </h1>
 
         {/* Supporting Copy with enhanced contrast */}
         <p className="text-base sm:text-lg md:text-xl text-[#F5F2EA] font-normal max-w-2xl leading-relaxed mb-8 sm:mb-10 px-2 drop-shadow-[0_2px_18px_rgba(0,0,0,1)]">
-          Precision cuts. Refined grooming. A better version of you. Experience bespoke barbering crafted by master artisans in an unhurried, private lounge.
+          {t('hero_description')}
         </p>
 
         {/* CTAs */}
@@ -95,14 +97,14 @@ export default function Hero({
             className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-8 py-4 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-bold text-sm tracking-wider uppercase transition-all shadow-[0_0_35px_rgba(200,162,77,0.45)] hover:shadow-[0_0_45px_rgba(200,162,77,0.6)] active:scale-[0.98] group"
           >
             <Calendar className="w-4 h-4 text-[#0B0B0B] group-hover:scale-110 transition-transform" />
-            <span>BOOK YOUR APPOINTMENT</span>
+            <span>{t('hero_cta_book')}</span>
           </a>
 
           <a
             href="#services"
             className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-4 rounded-xl bg-[#151515]/90 hover:bg-[#1E1E1E] backdrop-blur-md text-[#F5F2EA] border border-[#C8A24D]/30 hover:border-[#C8A24D] font-semibold text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg"
           >
-            <span>EXPLORE OUR SERVICES</span>
+            <span>{t('hero_cta_services')}</span>
           </a>
         </div>
 
@@ -112,24 +114,24 @@ export default function Hero({
             <div className="w-9 h-9 rounded-lg bg-[#141414] border border-[#C8A24D]/35 flex items-center justify-center mb-1.5 text-[#C8A24D]">
               <Scissors className="w-4 h-4" />
             </div>
-            <span className="text-xs sm:text-sm font-semibold text-[#F5F2EA]">Precision Cut</span>
-            <span className="text-[11px] text-[#A6A6A6] hidden sm:inline">Tailored to face shape</span>
+            <span className="text-xs sm:text-sm font-semibold text-[#F5F2EA]">{t('hero_feature_1')}</span>
+            <span className="text-[11px] text-[#A6A6A6] hidden sm:inline">{t('hero_feature_1_desc')}</span>
           </div>
 
           <div className="flex flex-col items-center text-center">
             <div className="w-9 h-9 rounded-lg bg-[#141414] border border-[#C8A24D]/35 flex items-center justify-center mb-1.5 text-[#C8A24D]">
               <ShieldCheck className="w-4 h-4" />
             </div>
-            <span className="text-xs sm:text-sm font-semibold text-[#F5F2EA]">Sterilized Tools</span>
-            <span className="text-[11px] text-[#A6A6A6] hidden sm:inline">Medical grade hygiene</span>
+            <span className="text-xs sm:text-sm font-semibold text-[#F5F2EA]">{t('hero_feature_2')}</span>
+            <span className="text-[11px] text-[#A6A6A6] hidden sm:inline">{t('hero_feature_2_desc')}</span>
           </div>
 
           <div className="flex flex-col items-center text-center">
             <div className="w-9 h-9 rounded-lg bg-[#141414] border border-[#C8A24D]/35 flex items-center justify-center mb-1.5 text-[#C8A24D]">
               <Clock className="w-4 h-4" />
             </div>
-            <span className="text-xs sm:text-sm font-semibold text-[#F5F2EA]">Reserved Slots</span>
-            <span className="text-[11px] text-[#A6A6A6] hidden sm:inline">Zero unnecessary wait</span>
+            <span className="text-xs sm:text-sm font-semibold text-[#F5F2EA]">{t('hero_feature_3')}</span>
+            <span className="text-[11px] text-[#A6A6A6] hidden sm:inline">{t('hero_feature_3_desc')}</span>
           </div>
         </div>
 

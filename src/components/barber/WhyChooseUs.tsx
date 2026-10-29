@@ -2,9 +2,38 @@
 
 import React from 'react';
 import { Scissors, Sparkles, ShieldCheck, Clock, UserCheck } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function WhyChooseUs() {
-  const pillars = [
+  const { t, language } = useLanguage();
+
+  const pillars = language === 'bn' ? [
+    {
+      icon: Scissors,
+      title: 'নিখুঁত কারিগরি ও যত্ন',
+      description: 'আপনার মুখের গঠন, চুলের প্যাটার্ন ও জীবনযাত্রার সাথে মানিয়ে প্রতিটি হেয়ারকাট ও দাড়ি নিখুঁত করা হয়।',
+    },
+    {
+      icon: Sparkles,
+      title: 'পেশাদার ও মার্জিত গ্রুমিং',
+      description: 'আধুনিক কাঁচি ও ট্রিমার টেকনিকের সাথে ঐতিহ্যবাহী সেলুন রীতির সমন্বয়ে আপনার ব্যক্তিত্বে আনবে অনন্য দীপ্তি।',
+    },
+    {
+      icon: ShieldCheck,
+      title: '১০০% জীবাণুমুক্ত স্বাস্থ্যবিধি',
+      description: 'প্রতিটি গ্রাহকের আগে কাঁচি, ট্রিমার ও ব্লেড কঠোরভাবে স্যানিটাইজ করা হয়। সম্পূর্ণ নতুন ব্লেড নিশ্চিত।',
+    },
+    {
+      icon: Clock,
+      title: 'সংরক্ষিত সময়ের নিশ্চয়তা',
+      description: 'আমরা আপনার সময়ের মূল্য বুঝি। বুক করা স্লট শুধুমাত্র আপনার জন্যই সংরক্ষিত থাকে, দীর্ঘ লাইন বা অপেক্ষা নেই।',
+    },
+    {
+      icon: UserCheck,
+      title: 'ব্যক্তিগত গ্রাহক সেবা',
+      description: 'সেবা শুরুর আগে আপনার পছন্দ ও স্টাইল নিয়ে আলোচনা, যাতে আপনি পান সম্পূর্ণ প্রত্যাশিত নিখুঁত লুক।',
+    },
+  ] : [
     {
       icon: Scissors,
       title: 'Precision & Attention to Detail',
@@ -43,14 +72,14 @@ export default function WhyChooseUs() {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-14 sm:mb-20">
           <span className="text-xs uppercase tracking-[0.25em] text-[#C8A24D] font-semibold block mb-3">
-            Our Standard
+            {t('why_subtitle')}
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-[#F5F2EA] tracking-tight">
-            Why Choose Golden Cuts
+            {t('why_title')}
           </h2>
           <div className="w-16 h-0.5 bg-[#C8A24D] mx-auto mt-4 mb-4 opacity-70" />
           <p className="text-sm sm:text-base text-[#A6A6A6] leading-relaxed">
-            A quiet commitment to excellence. We focus on craft, cleanliness, and respectful service.
+            {t('why_desc')}
           </p>
         </div>
 
