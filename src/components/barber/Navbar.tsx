@@ -42,25 +42,25 @@ export default function Navbar({
           : 'bg-transparent py-4 sm:py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-1 sm:gap-2">
           {/* Brand Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24D]"
+            className="flex items-center space-x-2 sm:space-x-2.5 shrink-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24D]"
           >
-            <div className="relative w-10 h-10 rounded-xl bg-[#141414] border border-[#C8A24D]/35 flex items-center justify-center p-1 group-hover:border-[#C8A24D] group-hover:shadow-[0_0_18px_rgba(200,162,77,0.35)] transition-all overflow-hidden">
+            <div className="relative w-10 h-10 sm:w-11 sm:h-11 shrink-0 aspect-square rounded-xl bg-[#141414] border border-[#C8A24D]/40 flex items-center justify-center p-0.5 sm:p-1 group-hover:border-[#C8A24D] group-hover:shadow-[0_0_18px_rgba(200,162,77,0.35)] transition-all shadow-md">
               <img
                 src="/images/logo-nav.png"
                 alt="Golden Cuts Logo"
-                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="flex flex-col">
-              <span className="font-serif tracking-widest text-lg sm:text-xl font-bold text-[#F5F2EA] group-hover:text-[#C8A24D] transition-colors">
+            <div className="flex flex-col justify-center">
+              <span className="font-serif tracking-wider sm:tracking-widest text-[14px] sm:text-lg md:text-xl font-bold text-[#F5F2EA] group-hover:text-[#C8A24D] transition-colors leading-tight whitespace-nowrap">
                 {salonName}
               </span>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-[#C8A24D] font-medium -mt-1">
+              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#C8A24D] font-medium leading-none mt-0.5 whitespace-nowrap">
                 {language === 'bn' ? 'গ্রুমিং ও সেলুন' : 'Grooming & Salon'}
               </span>
             </div>
@@ -126,26 +126,28 @@ export default function Navbar({
           </div>
 
           {/* Mobile Right Controls */}
-          <div className="flex items-center space-x-2 md:hidden">
-            {/* Mobile Language Switcher */}
-            <div className="inline-flex items-center rounded-lg bg-[#141414] border border-[#C8A24D]/30 p-0.5 text-[11px]">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0 md:hidden">
+            {/* Mobile Compact Language Switcher */}
+            <div className="inline-flex items-center rounded-full bg-[#121212] border border-[#C8A24D]/35 p-0.5 text-[10px] shadow-sm">
               <button
                 onClick={() => setLanguage('en')}
-                className={`px-2 py-1 rounded-md transition-all ${
+                className={`px-1.5 py-0.5 rounded-full transition-all font-semibold leading-tight ${
                   language === 'en'
-                    ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold'
-                    : 'text-[#A6A6A6]'
+                    ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                    : 'text-[#8E8E8E] hover:text-[#F5F2EA]'
                 }`}
+                title="Switch to English"
               >
                 EN
               </button>
               <button
                 onClick={() => setLanguage('bn')}
-                className={`px-2 py-1 rounded-md transition-all ${
+                className={`px-1.5 py-0.5 rounded-full transition-all font-semibold leading-tight ${
                   language === 'bn'
-                    ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold'
-                    : 'text-[#A6A6A6]'
+                    ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                    : 'text-[#8E8E8E] hover:text-[#F5F2EA]'
                 }`}
+                title="বাংলায় দেখুন"
               >
                 বাংলা
               </button>
@@ -153,18 +155,18 @@ export default function Navbar({
 
             <a
               href="#booking"
-              className="px-3 py-1.5 rounded-lg bg-[#C8A24D] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider active:scale-95 transition"
+              className="px-2.5 py-1 rounded-lg bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-bold text-[11px] uppercase tracking-wider active:scale-95 transition shadow-sm"
             >
               {language === 'bn' ? 'বুক' : 'Book'}
             </a>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg text-[#F5F2EA] hover:text-[#C8A24D] bg-[#151515] border border-[#262626] focus:outline-none"
+              className="p-1.5 rounded-lg text-[#F5F2EA] hover:text-[#C8A24D] bg-[#151515] border border-[#262626] focus:outline-none"
               aria-label="Toggle navigation menu"
               aria-expanded={isOpen}
             >
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isOpen ? <X className="w-5 h-5 text-[#C8A24D]" /> : <Menu className="w-5 h-5 text-[#F5F2EA]" />}
             </button>
           </div>
         </div>
@@ -186,6 +188,36 @@ export default function Navbar({
             ))}
           </nav>
           <div className="pt-3 border-t border-[#1F1F1F] flex flex-col space-y-2.5">
+            {/* Language Switcher inside Drawer */}
+            <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#151515] border border-[#2B2B2B]">
+              <span className="text-xs text-[#A6A6A6] flex items-center space-x-1.5">
+                <Globe className="w-3.5 h-3.5 text-[#C8A24D]" />
+                <span>{language === 'bn' ? 'ভাষা পরিবর্তন' : 'Language'}</span>
+              </span>
+              <div className="inline-flex items-center rounded-lg bg-[#0E0E0E] border border-[#C8A24D]/30 p-0.5 text-xs">
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`px-2.5 py-1 rounded-md transition-all ${
+                    language === 'en'
+                      ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                      : 'text-[#A6A6A6]'
+                  }`}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => setLanguage('bn')}
+                  className={`px-2.5 py-1 rounded-md transition-all ${
+                    language === 'bn'
+                      ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                      : 'text-[#A6A6A6]'
+                  }`}
+                >
+                  বাংলা
+                </button>
+              </div>
+            </div>
+
             <a
               href={`tel:${phone}`}
               className="flex items-center justify-center space-x-2 py-2.5 rounded-lg bg-[#151515] text-xs font-medium text-[#F5F2EA] border border-[#2B2B2B]"
