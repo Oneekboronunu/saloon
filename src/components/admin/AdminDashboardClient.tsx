@@ -933,7 +933,7 @@ export default function AdminDashboardClient({
                     <button
                       onClick={handleRescheduleSubmit}
                       disabled={rescheduling}
-                      className="px-5 py-2 rounded-xl bg-[#C8A24D] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider disabled:opacity-50"
+                      className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider disabled:opacity-50 shadow-md border border-[#F5E6B3]/40 active:scale-95 transition-all"
                     >
                       {rescheduling ? 'Saving...' : 'Confirm Reschedule'}
                     </button>
@@ -970,7 +970,7 @@ export default function AdminDashboardClient({
                   });
                   setServiceModalOpen(true);
                 }}
-                className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider transition shadow-md"
+                className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider transition shadow-[0_4px_20px_rgba(200,162,77,0.35)] border border-[#F5E6B3]/40 active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Service</span>
@@ -1145,7 +1145,7 @@ export default function AdminDashboardClient({
                       <button
                         type="submit"
                         disabled={savingService}
-                        className="px-5 py-2 rounded-xl bg-[#C8A24D] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider disabled:opacity-50"
+                        className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider disabled:opacity-50 shadow-md border border-[#F5E6B3]/40 active:scale-95 transition-all"
                       >
                         {savingService ? 'Saving...' : 'Save Service'}
                       </button>
@@ -1339,7 +1339,7 @@ export default function AdminDashboardClient({
                 <button
                   type="submit"
                   disabled={savingSettings}
-                  className="px-6 py-2.5 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider transition disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider transition disabled:opacity-50 shadow-[0_4px_20px_rgba(200,162,77,0.35)] border border-[#F5E6B3]/40 active:scale-95"
                 >
                   {savingSettings ? 'Saving Settings...' : 'Save All Settings'}
                 </button>

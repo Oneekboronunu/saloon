@@ -87,7 +87,7 @@ export default function Navbar({
                 onClick={() => setLanguage('en')}
                 className={`px-2.5 py-1 rounded-md transition-all ${
                   language === 'en'
-                    ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                    ? 'bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] text-[#0B0B0B] font-bold shadow-sm'
                     : 'text-[#A6A6A6] hover:text-[#F5F2EA]'
                 }`}
                 title="Switch to English"
@@ -98,7 +98,7 @@ export default function Navbar({
                 onClick={() => setLanguage('bn')}
                 className={`px-2.5 py-1 rounded-md transition-all ${
                   language === 'bn'
-                    ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                    ? 'bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] text-[#0B0B0B] font-bold shadow-sm'
                     : 'text-[#A6A6A6] hover:text-[#F5F2EA]'
                 }`}
                 title="বাংলায় পরিবর্তন করুন"
@@ -118,7 +118,7 @@ export default function Navbar({
 
             <a
               href="#booking"
-              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-semibold text-xs tracking-wider uppercase transition-all shadow-md hover:shadow-lg active:scale-95"
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs tracking-wider uppercase transition-all shadow-[0_4px_20px_rgba(200,162,77,0.4)] hover:shadow-[0_6px_25px_rgba(200,162,77,0.6)] border border-[#F5E6B3]/45 active:scale-95"
             >
               <Calendar className="w-3.5 h-3.5" />
               <span>{t('nav_book')}</span>
@@ -133,7 +133,7 @@ export default function Navbar({
                 onClick={() => setLanguage('en')}
                 className={`px-1.5 py-0.5 rounded-full transition-all font-semibold leading-tight ${
                   language === 'en'
-                    ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                    ? 'bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] text-[#0B0B0B] font-bold shadow-sm'
                     : 'text-[#8E8E8E] hover:text-[#F5F2EA]'
                 }`}
                 title="Switch to English"
@@ -144,7 +144,7 @@ export default function Navbar({
                 onClick={() => setLanguage('bn')}
                 className={`px-1.5 py-0.5 rounded-full transition-all font-semibold leading-tight ${
                   language === 'bn'
-                    ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                    ? 'bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] text-[#0B0B0B] font-bold shadow-sm'
                     : 'text-[#8E8E8E] hover:text-[#F5F2EA]'
                 }`}
                 title="বাংলায় দেখুন"
@@ -155,7 +155,7 @@ export default function Navbar({
 
             <a
               href="#booking"
-              className="px-2.5 py-1 rounded-lg bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-bold text-[11px] uppercase tracking-wider active:scale-95 transition shadow-sm"
+              className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all shadow-[0_4px_16px_rgba(200,162,77,0.4)] border border-[#F5E6B3]/45 flex items-center justify-center shrink-0"
             >
               {language === 'bn' ? 'বুক' : 'Book'}
             </a>
@@ -199,7 +199,7 @@ export default function Navbar({
                   onClick={() => setLanguage('en')}
                   className={`px-2.5 py-1 rounded-md transition-all ${
                     language === 'en'
-                      ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                      ? 'bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] text-[#0B0B0B] font-bold shadow-sm'
                       : 'text-[#A6A6A6]'
                   }`}
                 >
@@ -209,7 +209,7 @@ export default function Navbar({
                   onClick={() => setLanguage('bn')}
                   className={`px-2.5 py-1 rounded-md transition-all ${
                     language === 'bn'
-                      ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold shadow-sm'
+                      ? 'bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] text-[#0B0B0B] font-bold shadow-sm'
                       : 'text-[#A6A6A6]'
                   }`}
                 >
@@ -228,7 +228,7 @@ export default function Navbar({
             <a
               href="#booking"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center space-x-2 py-3 rounded-lg bg-[#C8A24D] text-[#0B0B0B] text-xs font-bold uppercase tracking-wider shadow-md"
+              className="flex items-center justify-center space-x-2 py-3.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] text-xs font-bold uppercase tracking-wider shadow-[0_4px_20px_rgba(200,162,77,0.4)] border border-[#F5E6B3]/45 active:scale-98 transition-all"
             >
               <Calendar className="w-4 h-4" />
               <span>{t('nav_book')}</span>

@@ -420,7 +420,7 @@ export default function BookingWizard({
                 <button
                   onClick={() => setStep(2)}
                   disabled={selectedServices.length === 0}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition shadow-md"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition shadow-[0_4px_20px_rgba(200,162,77,0.35)] border border-[#F5E6B3]/40 active:scale-95"
                 >
                   <span>Select Date</span>
                   <ArrowRight className="w-4 h-4" />
@@ -525,7 +525,7 @@ export default function BookingWizard({
                 <button
                   onClick={() => setStep(3)}
                   disabled={!selectedDate}
-                  className="px-6 py-2.5 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] disabled:opacity-40 text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center space-x-2 transition"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] disabled:opacity-40 text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center space-x-2 transition shadow-[0_4px_20px_rgba(200,162,77,0.35)] border border-[#F5E6B3]/40 active:scale-95"
                 >
                   <span>Select Time</span>
                   <ArrowRight className="w-4 h-4" />
@@ -573,7 +573,7 @@ export default function BookingWizard({
                   </p>
                   <button
                     onClick={() => setStep(2)}
-                    className="px-4 py-2 rounded-lg bg-[#C8A24D] text-[#0B0B0B] text-xs font-bold uppercase tracking-wider"
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] text-xs font-bold uppercase tracking-wider shadow-md border border-[#F5E6B3]/40"
                   >
                     Change Date
                   </button>
@@ -621,7 +621,7 @@ export default function BookingWizard({
                 <button
                   onClick={() => setStep(4)}
                   disabled={!selectedSlot}
-                  className="px-6 py-2.5 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] disabled:opacity-40 text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center space-x-2 transition"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] disabled:opacity-40 text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center space-x-2 transition shadow-[0_4px_20px_rgba(200,162,77,0.35)] border border-[#F5E6B3]/40 active:scale-95"
                 >
                   <span>Customer Details</span>
                   <ArrowRight className="w-4 h-4" />
@@ -739,7 +739,7 @@ export default function BookingWizard({
                   onClick={() => {
                     if (validateForm()) setStep(5);
                   }}
-                  className="px-6 py-2.5 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center space-x-2 transition"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center space-x-2 transition shadow-[0_4px_20px_rgba(200,162,77,0.35)] border border-[#F5E6B3]/40 active:scale-95"
                 >
                   <span>Review Booking</span>
                   <ArrowRight className="w-4 h-4" />
@@ -834,7 +834,7 @@ export default function BookingWizard({
                 <button
                   onClick={handleBookingSubmit}
                   disabled={submitting}
-                  className="px-8 py-3 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] disabled:opacity-50 text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center space-x-2 transition shadow-xl"
+                  className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] disabled:opacity-50 text-[#0B0B0B] font-extrabold text-xs uppercase tracking-wider flex items-center space-x-2 transition shadow-[0_0_25px_rgba(200,162,77,0.45)] hover:shadow-[0_0_35px_rgba(200,162,77,0.65)] border border-[#F5E6B3]/45 active:scale-95"
                 >
                   {submitting ? (
                     <>

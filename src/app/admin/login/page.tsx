@@ -117,7 +117,7 @@ export default function AdminLoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] disabled:opacity-50 text-[#0B0B0B] font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition shadow-md"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] disabled:opacity-50 text-[#0B0B0B] font-extrabold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition-all shadow-[0_4px_20px_rgba(200,162,77,0.4)] border border-[#F5E6B3]/45 active:scale-98"
               >
                 {loading ? (
                   <>

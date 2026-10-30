@@ -193,7 +193,7 @@ export default function Gallery() {
                 <a
                   href="#booking"
                   onClick={() => setSelectedItem(null)}
-                  className="px-4 py-2 rounded-lg bg-[#C8A24D] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider shadow-md border border-[#F5E6B3]/40 active:scale-95 transition-all"
                 >
                   Book Similar Cut
                 </a>

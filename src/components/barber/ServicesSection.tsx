@@ -136,9 +136,9 @@ export default function ServicesSection({
                       : (language === 'bn' ? 'বাছাই করতে চাপুন' : 'Tap to Select')}
                   </span>
                   <div
-                    className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                    className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                       isSelected
-                        ? 'bg-[#C8A24D] text-[#0B0B0B]'
+                        ? 'bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] text-[#0B0B0B] border border-[#F5E6B3]/40 shadow-sm'
                         : 'bg-[#1C1C1C] text-[#F5F2EA] hover:bg-[#252525] border border-[#2B2B2B]'
                     }`}
                   >
@@ -197,7 +197,7 @@ export default function ServicesSection({
               </div>
               <button
                 onClick={onProceedToBooking}
-                className="flex items-center space-x-2 px-6 py-3 rounded-xl bg-[#C8A24D] hover:bg-[#D8B45E] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider shadow-lg active:scale-95 transition-all"
+                className="flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider shadow-[0_4px_20px_rgba(200,162,77,0.4)] border border-[#F5E6B3]/45 active:scale-95 transition-all"
               >
                 <span>{language === 'bn' ? 'পরবর্তী ধাপ' : 'Continue'}</span>
                 <ArrowRight className="w-4 h-4" />
