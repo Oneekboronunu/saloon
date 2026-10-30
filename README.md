@@ -51,9 +51,7 @@ A production-ready website, real-time appointment booking system, and protected 
 ## 🛡️ Administrative Dashboard (`/admin`)
 
 - **Secure Route**: Protected by HMAC-SHA256 HttpOnly session cookies and bcrypt password hashing.
-- **Default Admin Account**:
-  - **Email**: `admin@goldencuts.com`
-  - **Password**: `GoldenCuts@2026`
+- **Admin Authentication**: Configured via secure environment variables (`ADMIN_DEFAULT_EMAIL` and `ADMIN_DEFAULT_PASSWORD`).
 - **Dashboard Overview**: Database-backed metrics (Today's bookings, Upcoming, Pending, Confirmed, Completed, Cancelled, and Total Revenue).
 - **Appointment Management**:
   - Filter by status (`ALL`, `PENDING`, `CONFIRMED`, `COMPLETED`, `CANCELLED`).
@@ -90,8 +88,8 @@ The `.env` file is pre-configured for local development:
 ```env
 DATABASE_URL="file:./dev.db"
 ADMIN_JWT_SECRET="golden_cuts_super_secret_jwt_key_2026_barbershop_luxury"
-ADMIN_DEFAULT_EMAIL="admin@goldencuts.com"
-ADMIN_DEFAULT_PASSWORD="GoldenCuts@2026"
+ADMIN_DEFAULT_EMAIL="<configured_admin_email>"
+ADMIN_DEFAULT_PASSWORD="<configured_admin_password>"
 NEXT_PUBLIC_BRAND_NAME="GOLDEN CUTS"
 NEXT_PUBLIC_PHONE="01780625295"
 NEXT_PUBLIC_WHATSAPP_NUMBER="8801780625295"

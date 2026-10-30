@@ -89,7 +89,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@goldencuts.com"
+                  placeholder="Enter email address"
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0B0B0B] border border-[#262626] text-sm text-[#F5F2EA] placeholder-[#555] focus:outline-none focus:border-[#C8A24D] transition"
                   required
                 />
@@ -133,16 +133,6 @@ export default function AdminLoginPage() {
               </button>
             </div>
           </form>
-
-          {/* Default credentials note for review */}
-          <div className="mt-6 pt-5 border-t border-[#222] text-center">
-            <span className="text-[11px] text-[#737373] block mb-1">
-              Initial Demo Admin Credentials:
-            </span>
-            <code className="text-[10px] bg-[#0E0E0E] px-2 py-1 rounded text-[#C8A24D] border border-[#262626]">
-              admin@goldencuts.com / GoldenCuts@2026
-            </code>
-          </div>
         </div>
 
         <div className="text-center mt-6">

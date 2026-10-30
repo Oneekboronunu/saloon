@@ -98,8 +98,8 @@ export async function verifyAdminCredentials(email: string, password: string) {
   }
 
   // Fallback to environment credentials
-  const defaultEmail = (process.env.ADMIN_DEFAULT_EMAIL || 'admin@goldencuts.com').toLowerCase().trim();
-  const defaultPass = process.env.ADMIN_DEFAULT_PASSWORD || 'GoldenCuts@2026';
+  const defaultEmail = (process.env.ADMIN_DEFAULT_EMAIL || 'yasin@gmail.com').toLowerCase().trim();
+  const defaultPass = process.env.ADMIN_DEFAULT_PASSWORD || 'yasin12#*';
 
   if (email.toLowerCase().trim() === defaultEmail && password === defaultPass) {
     return {

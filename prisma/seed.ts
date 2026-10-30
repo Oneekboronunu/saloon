@@ -7,19 +7,28 @@ async function main() {
   console.log('Seeding Golden Cuts Barbershop database...');
 
   // 1. Seed Admin User
-  const adminEmail = process.env.ADMIN_DEFAULT_EMAIL || 'admin@goldencuts.com';
-  const rawPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'GoldenCuts@2026';
+  const adminEmail = process.env.ADMIN_DEFAULT_EMAIL || 'yasin@gmail.com';
+  const rawPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'yasin12#*';
   const passwordHash = await bcrypt.hash(rawPassword, 10);
+
+  // Clean up legacy default admin if exists
+  await prisma.adminUser.deleteMany({
+    where: {
+      email: {
+        not: adminEmail,
+      },
+    },
+  });
 
   await prisma.adminUser.upsert({
     where: { email: adminEmail },
     update: {
       passwordHash,
-      name: 'Master Barber Admin',
+      name: 'Yasin (Administrator)',
     },
     create: {
       email: adminEmail,
-      name: 'Master Barber Admin',
+      name: 'Yasin (Administrator)',
       passwordHash,
       role: 'ADMIN',
     },
