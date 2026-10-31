@@ -1,0 +1,33 @@
+=====================================================
+  GOLDEN CUTS BARBERSHOP & SALON - PROJECT BACKUP
+=====================================================
+
+Welcome to your new device! Follow these simple steps to run the website:
+
+1. PREREQUISITES:
+   - Ensure Node.js (version 18 or higher) is installed on your new device:
+     Download from: https://nodejs.org/
+
+2. SETUP:
+   - Open terminal / PowerShell inside this project folder:
+   - Run the following command to install all project dependencies:
+     npm install
+
+   - Generate the database client:
+     npx prisma generate
+
+3. START DEVELOPMENT SERVER:
+   - Run:
+     npm run dev
+   - Open your browser at:
+     http://localhost:3000
+
+4. ADMIN DASHBOARD CREDENTIALS:
+   - Admin Login URL: http://localhost:3000/admin/login
+   - Admin Email: yasin@gmail.com
+   - Admin Password: yasin12#*
+
+5. LIVE DEPLOYMENT & REPOSITORY:
+   - Live Website: https://saloon-lyart-nine.vercel.app/
+   - GitHub Repository: https://github.com/Oneekboronunu/saloon
+=====================================================
