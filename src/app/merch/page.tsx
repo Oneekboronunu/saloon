@@ -4,7 +4,8 @@ import { getSettingsMap } from '@/lib/bookingEngine';
 import { DEFAULT_SETTINGS } from '@/lib/constants';
 import MerchPageClient from '@/components/barber/MerchPageClient';
 
-export const dynamic = 'force-dynamic';
+// Cache at Vercel Edge CDN for instant load times
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Salon Merchandise & Grooming Store — AIYAN HAIR CUTTING SALON',
@@ -21,12 +22,13 @@ export default async function MerchPage() {
   let settings = DEFAULT_SETTINGS;
 
   try {
-    const dbSettings = await getSettingsMap();
-    if (dbSettings) {
-      settings = dbSettings;
+    const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 800));
+    const result = await Promise.race([getSettingsMap(), timeout]);
+    if (result && typeof result === 'object') {
+      settings = result as any;
     }
   } catch (error) {
-    console.warn('Database offline or unconfigured on host; utilizing pre-configured settings.');
+    console.warn('Utilizing pre-configured luxury settings for instant response.');
   }
 
   const salonName = settings.salon_name || 'AIYAN HAIR CUTTING SALON';
