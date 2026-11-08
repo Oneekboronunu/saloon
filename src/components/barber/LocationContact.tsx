@@ -15,7 +15,7 @@ interface LocationContactProps {
 }
 
 export default function LocationContact({
-  salonName = 'GOLDEN CUTS',
+  salonName = 'AIYAN HAIR CUTTING SALON',
   address = 'Housing Colony Road, Steel Mill, North Patenga, Chattogram, Bangladesh',
   phone = '01780625295',
   whatsapp = '8801780625295',

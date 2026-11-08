@@ -11,14 +11,14 @@ export default function Loading() {
         <div className="relative w-28 h-28 sm:w-36 sm:h-36 mb-6">
           <img
             src="/images/logo.png"
-            alt="GOLDEN CUTS"
+            alt="AIYAN"
             className="w-full h-full object-contain filter drop-shadow-[0_0_25px_rgba(200,162,77,0.45)] animate-gold-pulse"
           />
         </div>
 
         {/* Brand Name */}
         <span className="font-serif text-lg sm:text-xl font-bold tracking-[0.25em] text-[#F5F2EA] mb-2 drop-shadow-md">
-          GOLDEN CUTS
+          AIYAN
         </span>
 
         <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.3em] text-[#C8A24D] mb-6">

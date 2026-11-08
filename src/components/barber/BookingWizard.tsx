@@ -256,7 +256,7 @@ export default function BookingWizard({
           `অনুগ্রহ করে আমার স্লটটি কনফার্ম করুন। ধন্যবাদ!`
         )
       : encodeURIComponent(
-          `Hello Golden Cuts,\nI have scheduled an appointment.\n\n` +
+          `Hello AIYAN Hair Cutting Salon,\nI have scheduled an appointment.\n\n` +
           `Booking Ref: ${confirmedBooking.reference}\n` +
           `Name: ${confirmedBooking.customerName}\n` +
           `Date: ${confirmedBooking.appointmentDate}\n` +

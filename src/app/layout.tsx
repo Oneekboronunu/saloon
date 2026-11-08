@@ -11,11 +11,11 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'GOLDEN CUTS — Premium Men’s Barbershop & Grooming Salon',
+  title: 'AIYAN — Hair Cutting Salon & Men\'s Grooming',
   description:
     'Experience bespoke barbering in Chattogram. Precision haircuts, skin fades, sculpted beard shaping, and hot towel treatments by master craftsmen in North Patenga.',
   keywords: [
-    'Golden Cuts',
+    'AIYAN', 'Aiyan Hair Cutting Salon',
     'Barbershop Chattogram',
     'Men Salon Patenga',
     'Steel Mill Saloon',
@@ -25,12 +25,12 @@ export const metadata: Metadata = {
     'Online Barber Booking',
   ],
   openGraph: {
-    title: 'GOLDEN CUTS — Premium Men’s Barbershop & Grooming Salon',
+    title: 'AIYAN — Hair Cutting Salon & Men\'s Grooming',
     description:
       'Precision cuts. Refined grooming. A better version of you. Real-time online appointment scheduling in North Patenga, Chattogram.',
     type: 'website',
     locale: 'en_BD',
-    siteName: 'GOLDEN CUTS',
+    siteName: 'AIYAN HAIR CUTTING SALON',
   },
   icons: {
     icon: [

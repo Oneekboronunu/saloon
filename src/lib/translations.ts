@@ -72,7 +72,7 @@ export const translations = {
     // Merchandise / Store
     merch_subtitle: 'Salon Store & Care',
     merch_title: 'Official Grooming Products & Styling Essentials',
-    merch_desc: 'Professional-grade styling items curated by our master barbers. Take home the signature Golden Cuts finish.',
+    merch_desc: 'Professional-grade styling items curated by our master barbers. Take home the signature AIYAN finish.',
     merch_buy_now: 'Buy Now',
     merch_in_stock: 'In Stock',
     merch_fast_delivery: 'Fast Delivery in Chattogram & Nationwide',
@@ -94,7 +94,7 @@ export const translations = {
 
     // Why Us
     why_subtitle: 'The Standard',
-    why_title: 'Why Discerning Gentlemen Choose Golden Cuts',
+    why_title: 'Why Discerning Gentlemen Choose AIYAN Hair Cutting Salon',
     why_desc: 'We reject rushing. Every client receives precision scissors work, razor line-ups, and genuine care.',
     why_card_1_title: 'Precision Craftsmanship',
     why_card_1_desc: 'Every fade, taper, and scissor snip is calibrated specifically to your bone structure and hair grain.',
@@ -215,7 +215,7 @@ export const translations = {
 
     // Why Us
     why_subtitle: 'আমাদের মান',
-    why_title: 'কেন সচেতন পুরুষদের প্রথম পছন্দ গোল্ডেন কাটস',
+    why_title: 'কেন সচেতন পুরুষদের প্রথম পছন্দ আইয়ান হেয়ার কাটিং সেলুন',
     why_desc: 'আমরা তাড়াহুড়ো করি না। প্রতিটি গ্রাহক পান নিখুঁত কাটিং, প্রিসিশন রেজার লাইন-আপ এবং আন্তরিক সেবা।',
     why_card_1_title: 'নিখুঁত কারিগরি',
     why_card_1_desc: 'আপনার চুলের ধরন ও চেহারার সাথে মিলিয়ে প্রতিটি কাট শৈল্পিকভাবে নিখুঁত করা হয়।',
@@ -241,6 +241,6 @@ export const translations = {
 
     // Footer
     footer_desc: 'প্রিমিয়াম মেন্স বারবারিং ও গ্রুমিং সেলুন। উত্তর পতেঙ্গা, চট্টগ্রামে নিখুঁত হেয়ারকাট, বিয়ার্ড ডিটেইলিং এবং হট টাওয়েল সেবা।',
-    footer_rights: 'সর্বস্বত্ব সংরক্ষিত। গোল্ডেন কাটস বারবারশপ।',
+    footer_rights: 'সর্বস্বত্ব সংরক্ষিত। আইয়ান হেয়ার কাটিং সেলুন।',
   },
 };

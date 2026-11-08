@@ -53,7 +53,7 @@ export default function MerchPageClient({
               
               <h1 className="text-2xl sm:text-4xl font-serif font-bold text-[#F5F2EA] tracking-wide leading-tight mb-3">
                 {language === 'bn'
-                  ? 'গোল্ডেন কাটস প্রিমিয়াম গ্রুমিং প্রোডাক্টস'
+                  ? 'আইয়ান হেয়ার কাটিং সেলুন প্রিমিয়াম গ্রুমিং প্রোডাক্টস'
                   : 'Salon-Grade Styling & Care for Home Re-creation'}
               </h1>
               

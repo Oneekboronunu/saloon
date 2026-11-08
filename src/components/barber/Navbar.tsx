@@ -11,7 +11,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({
-  salonName = 'GOLDEN CUTS',
+  salonName = 'AIYAN HAIR CUTTING SALON',
   phone = '01780625295',
 }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,16 +53,16 @@ export default function Navbar({
             <div className="relative w-10 h-10 sm:w-11 sm:h-11 shrink-0 aspect-square rounded-xl bg-[#141414] border border-[#C8A24D]/40 flex items-center justify-center p-0.5 sm:p-1 group-hover:border-[#C8A24D] group-hover:shadow-[0_0_18px_rgba(200,162,77,0.35)] transition-all shadow-md">
               <img
                 src="/images/logo-nav.png"
-                alt="Golden Cuts Logo"
+                alt="AIYAN Hair Cutting Salon Logo"
                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
               />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="font-serif tracking-wider sm:tracking-widest text-[14px] sm:text-lg md:text-xl font-bold text-[#F5F2EA] group-hover:text-[#C8A24D] transition-colors leading-tight whitespace-nowrap">
-                {salonName}
+              <span className="font-serif tracking-wider sm:tracking-widest text-[15px] sm:text-lg md:text-xl font-bold text-[#F5F2EA] group-hover:text-[#C8A24D] transition-colors leading-tight whitespace-nowrap">
+                {language === 'bn' ? 'আইয়ান' : 'AIYAN'}
               </span>
-              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#C8A24D] font-medium leading-none mt-0.5 whitespace-nowrap">
-                {language === 'bn' ? 'গ্রুমিং ও সেলুন' : 'Grooming & Salon'}
+              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.22em] text-[#C8A24D] font-semibold leading-none mt-0.5 whitespace-nowrap">
+                {language === 'bn' ? 'হেয়ার কাটিং সেলুন' : 'HAIR CUTTING SALON'}
               </span>
             </div>
           </Link>

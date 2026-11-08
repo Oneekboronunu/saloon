@@ -50,12 +50,12 @@ export default function AdminLoginPage() {
           <div className="relative w-20 h-20 mx-auto mb-3 p-1">
             <img
               src="/images/logo.png"
-              alt="GOLDEN CUTS"
+              alt="AIYAN"
               className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(200,162,77,0.4)]"
             />
           </div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-[#F5F2EA]">
-            GOLDEN CUTS
+            AIYAN
           </h1>
           <p className="text-xs text-[#C8A24D] uppercase tracking-[0.25em] mt-1 font-medium">
             Executive Portal
@@ -140,7 +140,7 @@ export default function AdminLoginPage() {
             href="/"
             className="text-xs text-[#737373] hover:text-[#C8A24D] transition"
           >
-            ← Return to Golden Cuts Website
+            ← Return to AIYAN Website
           </a>
         </div>
       </div>

@@ -80,7 +80,7 @@ export const DEFAULT_SERVICES: ServiceItem[] = [
 ];
 
 export const DEFAULT_SETTINGS: Record<string, string> = {
-  salon_name: 'GOLDEN CUTS',
+  salon_name: 'AIYAN HAIR CUTTING SALON',
   salon_tagline: 'YOUR STYLE. YOUR SIGNATURE.',
   phone: '01780625295',
   whatsapp: '8801780625295',

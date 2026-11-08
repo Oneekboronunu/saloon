@@ -12,7 +12,7 @@ interface FooterProps {
 }
 
 export default function Footer({
-  salonName = 'GOLDEN CUTS',
+  salonName = 'AIYAN HAIR CUTTING SALON',
   phone = '01780625295',
   address = 'Housing Colony Road, Steel Mill, North Patenga, Chattogram',
 }: FooterProps) {
@@ -25,16 +25,21 @@ export default function Footer({
           {/* Col 1: Brand */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center space-x-2.5">
-              <div className="relative w-9 h-9 rounded-xl bg-[#141414] border border-[#C8A24D]/35 flex items-center justify-center p-1 overflow-hidden shadow-md">
+              <div className="relative w-10 h-10 rounded-xl bg-black border border-[#C8A24D]/35 flex items-center justify-center p-1 overflow-hidden shadow-md">
                 <img
                   src="/images/logo-nav.png"
-                  alt="Golden Cuts Logo"
+                  alt="AIYAN Hair Cutting Salon Logo"
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="font-serif tracking-widest text-lg font-bold text-[#F5F2EA]">
-                {salonName}
-              </span>
+              <div className="flex flex-col justify-center">
+                <span className="font-serif tracking-widest text-lg font-bold text-[#F5F2EA] leading-tight">
+                  {language === 'bn' ? 'আইয়ান' : 'AIYAN'}
+                </span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#C8A24D] font-semibold leading-none mt-0.5">
+                  {language === 'bn' ? 'হেয়ার কাটিং সেলুন' : 'HAIR CUTTING SALON'}
+                </span>
+              </div>
             </div>
             <p className="text-xs text-[#A6A6A6] max-w-sm leading-relaxed">
               {t('footer_desc')}

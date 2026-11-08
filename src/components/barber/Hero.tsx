@@ -10,7 +10,7 @@ interface HeroProps {
 }
 
 export default function Hero({
-  salonName = 'GOLDEN CUTS',
+  salonName = 'AIYAN HAIR CUTTING SALON',
   tagline = 'YOUR STYLE. YOUR SIGNATURE.',
 }: HeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);

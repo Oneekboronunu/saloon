@@ -39,7 +39,7 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
   const whatsapp = settings.whatsapp || '8801780625295';
 
   const waText = encodeURIComponent(
-    `Hello Golden Cuts,\nI'm inquiring regarding my appointment:\nRef: ${appointment.reference}\nName: ${appointment.customerName}\nDate: ${appointment.appointmentDate} at ${appointment.startTime}`
+    `Hello AIYAN Hair Cutting Salon,\nI'm inquiring regarding my appointment:\nRef: ${appointment.reference}\nName: ${appointment.customerName}\nDate: ${appointment.appointmentDate} at ${appointment.startTime}`
   );
 
   return (

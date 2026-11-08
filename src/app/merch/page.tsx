@@ -7,11 +7,11 @@ import MerchPageClient from '@/components/barber/MerchPageClient';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Salon Merchandise & Grooming Store — GOLDEN CUTS',
+  title: 'Salon Merchandise & Grooming Store — AIYAN HAIR CUTTING SALON',
   description:
     'Exclusive barber-approved styling clays, volumizing powders, organic beard oils, and soothing aftershave balms. Order directly with WhatsApp home delivery in Chattogram.',
   openGraph: {
-    title: 'Salon Merchandise & Grooming Store — GOLDEN CUTS',
+    title: 'Salon Merchandise & Grooming Store — AIYAN HAIR CUTTING SALON',
     description:
       'Buy authentic barber styling and skincare products online. Direct WhatsApp checkout.',
   },
@@ -29,7 +29,7 @@ export default async function MerchPage() {
     console.warn('Database offline or unconfigured on host; utilizing pre-configured settings.');
   }
 
-  const salonName = settings.salon_name || 'GOLDEN CUTS';
+  const salonName = settings.salon_name || 'AIYAN HAIR CUTTING SALON';
   const salonPhone = settings.phone || '01780625295';
   const salonAddress = settings.address || 'Housing Colony Road, Steel Mill, North Patenga, Chattogram, Bangladesh';
 
