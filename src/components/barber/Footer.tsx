@@ -59,32 +59,32 @@ export default function Footer({
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <a href="#services" className="hover:text-[#C8A24D] transition-colors">
+                <a href="/#services" className="hover:text-[#C8A24D] transition-colors">
                   {t('nav_services')} & {t('nav_pricing')}
                 </a>
               </li>
               <li>
-                <a href="#booking" className="hover:text-[#C8A24D] transition-colors">
+                <a href="/#booking" className="hover:text-[#C8A24D] transition-colors">
                   {t('nav_book')}
                 </a>
               </li>
               <li>
-                <a href="#merch" className="hover:text-[#C8A24D] transition-colors">
+                <a href="/merch" className="hover:text-[#C8A24D] transition-colors">
                   {t('nav_merch')}
                 </a>
               </li>
               <li>
-                <a href="#why-us" className="hover:text-[#C8A24D] transition-colors">
+                <a href="/#why-us" className="hover:text-[#C8A24D] transition-colors">
                   {t('nav_why_us')}
                 </a>
               </li>
               <li>
-                <a href="#gallery" className="hover:text-[#C8A24D] transition-colors">
+                <a href="/#gallery" className="hover:text-[#C8A24D] transition-colors">
                   {t('nav_gallery')}
                 </a>
               </li>
               <li>
-                <a href="#location" className="hover:text-[#C8A24D] transition-colors">
+                <a href="/#location" className="hover:text-[#C8A24D] transition-colors">
                   {t('nav_location')}
                 </a>
               </li>

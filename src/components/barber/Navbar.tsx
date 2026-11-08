@@ -27,12 +27,12 @@ export default function Navbar({
   }, []);
 
   const navLinks = [
-    { label: t('nav_services'), href: '#services' },
-    { label: t('nav_pricing'), href: '#pricing' },
-    { label: t('nav_merch'), href: '#merch' },
-    { label: t('nav_why_us'), href: '#why-us' },
-    { label: t('nav_gallery'), href: '#gallery' },
-    { label: t('nav_location'), href: '#location' },
+    { label: t('nav_services'), href: '/#services' },
+    { label: t('nav_pricing'), href: '/#pricing' },
+    { label: t('nav_merch'), href: '/merch' },
+    { label: t('nav_why_us'), href: '/#why-us' },
+    { label: t('nav_gallery'), href: '/#gallery' },
+    { label: t('nav_location'), href: '/#location' },
   ];
 
   return (
@@ -118,7 +118,7 @@ export default function Navbar({
             </a>
 
             <a
-              href="#booking"
+              href="/#booking"
               className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs tracking-wider uppercase transition-all shadow-[0_4px_20px_rgba(200,162,77,0.4)] hover:shadow-[0_6px_25px_rgba(200,162,77,0.6)] border border-[#F5E6B3]/45 active:scale-95"
             >
               <Calendar className="w-3.5 h-3.5" />
@@ -155,7 +155,7 @@ export default function Navbar({
             </div>
 
             <a
-              href="#booking"
+              href="/#booking"
               className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all shadow-[0_4px_16px_rgba(200,162,77,0.4)] border border-[#F5E6B3]/45 flex items-center justify-center shrink-0"
             >
               {language === 'bn' ? 'বুক' : 'Book'}
@@ -227,7 +227,7 @@ export default function Navbar({
               <span>{language === 'bn' ? 'সরাসরি কল করুন:' : 'Call us:'} {phone}</span>
             </a>
             <a
-              href="#booking"
+              href="/#booking"
               onClick={() => setIsOpen(false)}
               className="flex items-center justify-center space-x-2 py-3.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] text-xs font-bold uppercase tracking-wider shadow-[0_4px_20px_rgba(200,162,77,0.4)] border border-[#F5E6B3]/45 active:scale-98 transition-all"
             >
