@@ -27,7 +27,7 @@ export default function Footer({
             <div className="flex items-center space-x-2.5">
               <div className="relative w-10 h-10 rounded-xl bg-black border border-[#C8A24D]/35 flex items-center justify-center p-1 overflow-hidden shadow-md">
                 <img
-                  src="/images/logo-nav.png"
+                  src="/images/aiyan-shears-logo.png"
                   alt="AIYAN Hair Cutting Salon Logo"
                   className="w-full h-full object-contain"
                 />

@@ -69,6 +69,17 @@ export default function Hero({
 
       {/* ================= HERO FOREGROUND CONTENT ================= */}
       <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center">
+        {/* Luxury Gold Shears Emblem */}
+        <div className="relative mb-5 sm:mb-6 animate-in fade-in zoom-in-95 duration-500">
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto p-1.5 rounded-2xl bg-[#141414]/90 border border-[#C8A24D]/40 backdrop-blur-md shadow-[0_0_30px_rgba(200,162,77,0.35)] flex items-center justify-center">
+            <img
+              src="/images/aiyan-shears-logo.png"
+              alt="AIYAN Hair Cutting Salon Logo"
+              className="w-full h-full object-contain filter drop-shadow-[0_2px_12px_rgba(200,162,77,0.5)]"
+            />
+          </div>
+        </div>
+
         {/* Location & Status Badge */}
         <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#151515]/90 backdrop-blur-md border border-[#C8A24D]/40 mb-6 sm:mb-8 animate-in fade-in duration-500 shadow-2xl">
           <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />

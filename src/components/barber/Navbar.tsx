@@ -52,9 +52,9 @@ export default function Navbar({
           >
             <div className="relative w-10 h-10 sm:w-11 sm:h-11 shrink-0 aspect-square rounded-xl bg-[#141414] border border-[#C8A24D]/40 flex items-center justify-center p-0.5 sm:p-1 group-hover:border-[#C8A24D] group-hover:shadow-[0_0_18px_rgba(200,162,77,0.35)] transition-all shadow-md">
               <img
-                src="/images/logo-nav.png"
+                src="/images/aiyan-shears-logo.png"
                 alt="AIYAN Hair Cutting Salon Logo"
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-contain filter drop-shadow-[0_2px_8px_rgba(200,162,77,0.3)] group-hover:scale-105 transition-transform duration-300"
               />
             </div>
             <div className="flex flex-col justify-center">

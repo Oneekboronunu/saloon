@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
         <div className="text-center mb-8">
           <div className="relative w-20 h-20 mx-auto mb-3 p-1">
             <img
-              src="/images/logo.png"
+              src="/images/aiyan-shears-logo.png"
               alt="AIYAN"
               className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(200,162,77,0.4)]"
             />

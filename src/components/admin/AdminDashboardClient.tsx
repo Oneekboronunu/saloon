@@ -525,7 +525,7 @@ export default function AdminDashboardClient({
         <div className="flex items-center space-x-3">
           <div className="relative w-9 h-9 rounded-lg bg-[#181818] border border-[#C8A24D]/40 flex items-center justify-center p-0.5 overflow-hidden shadow-md">
             <img
-              src="/images/logo-nav.png"
+              src="/images/aiyan-shears-logo.png"
               alt="Golden Cuts"
               className="w-full h-full object-contain"
             />
