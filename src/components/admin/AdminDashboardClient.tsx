@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { GalleryItem, DEFAULT_GALLERY_ITEMS, extractYouTubeId, getEmbedVideoUrl, getVideoThumbnail } from '@/lib/gallery';
 import {
   Calendar,
   Clock,
@@ -29,6 +30,14 @@ import {
   ArrowRight,
   Loader2,
   Check,
+  Camera,
+  Video,
+  Play,
+  Image as ImageIcon,
+  Upload,
+  Link as LinkIcon,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 interface AdminStats {
@@ -84,7 +93,7 @@ export default function AdminDashboardClient({
   initialSettings,
 }: AdminDashboardClientProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'overview' | 'appointments' | 'services' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'appointments' | 'services' | 'gallery' | 'settings'>('overview');
 
   // Stats state
   const [stats, setStats] = useState<AdminStats>(initialStats);
@@ -110,7 +119,18 @@ export default function AdminDashboardClient({
   const [editingService, setEditingService] = useState<Partial<ServiceItem> | null>(null);
   const [savingService, setSavingService] = useState<boolean>(false);
 
-  // Settings State
+    // Gallery Portfolio State
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [loadingGallery, setLoadingGallery] = useState<boolean>(false);
+  const [galleryModalOpen, setGalleryModalOpen] = useState<boolean>(false);
+  const [editingGalleryItem, setEditingGalleryItem] = useState<Partial<GalleryItem> | null>(null);
+  const [savingGalleryItem, setSavingGalleryItem] = useState<boolean>(false);
+  const [galleryFilter, setGalleryFilter] = useState<string>('ALL');
+  const [previewGalleryItem, setPreviewGalleryItem] = useState<GalleryItem | null>(null);
+  const [imageInputMethod, setImageInputMethod] = useState<'upload' | 'url'>('upload');
+  const [compressingImage, setCompressingImage] = useState<boolean>(false);
+
+// Settings State
   const [settings, setSettings] = useState<Record<string, string>>(initialSettings);
   const [savingSettings, setSavingSettings] = useState<boolean>(false);
   const [settingsSuccess, setSettingsSuccess] = useState<string>('');
@@ -332,7 +352,146 @@ export default function AdminDashboardClient({
     }
   };
 
-  // Logout
+    // Fetch Gallery Items
+  const fetchGalleryItems = async () => {
+    setLoadingGallery(true);
+    try {
+      const res = await fetch('/api/admin/gallery');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.items)) {
+        setGalleryItems(data.items);
+      }
+    } catch {
+      showToast('Failed to load gallery items', 'error');
+    } finally {
+      setLoadingGallery(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'gallery') {
+      fetchGalleryItems();
+    }
+  }, [activeTab]);
+
+  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast('Please select a valid image file', 'error');
+      return;
+    }
+
+    setCompressingImage(true);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          setEditingGalleryItem((prev) => ({
+            ...prev,
+            mediaUrl: dataUrl,
+            mediaType: 'IMAGE',
+          }));
+        }
+        setCompressingImage(false);
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveGalleryItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingGalleryItem?.title || !editingGalleryItem?.mediaUrl) {
+      showToast('Please provide a title and media (photo or video link)', 'error');
+      return;
+    }
+
+    setSavingGalleryItem(true);
+    try {
+      const res = await fetch('/api/admin/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingGalleryItem),
+      });
+
+      const data = await res.json();
+      if (data.success && Array.isArray(data.items)) {
+        setGalleryItems(data.items);
+        setGalleryModalOpen(false);
+        setEditingGalleryItem(null);
+        showToast(editingGalleryItem.id ? 'Gallery item updated' : 'Work added to gallery successfully');
+      } else {
+        showToast(data.error || 'Failed to save gallery item', 'error');
+      }
+    } catch {
+      showToast('Network error while saving gallery item', 'error');
+    } finally {
+      setSavingGalleryItem(false);
+    }
+  };
+
+  const handleDeleteGalleryItem = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this item from the gallery?')) return;
+
+    try {
+      const res = await fetch(`/api/admin/gallery?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await res.json();
+      if (data.success && Array.isArray(data.items)) {
+        setGalleryItems(data.items);
+        showToast('Work removed from gallery');
+      } else {
+        showToast(data.error || 'Failed to delete gallery item', 'error');
+      }
+    } catch {
+      showToast('Network error while deleting item', 'error');
+    }
+  };
+
+  const handleToggleGalleryItemActive = async (id: string) => {
+    try {
+      const res = await fetch('/api/admin/gallery', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action: 'toggleActive' }),
+      });
+
+      const data = await res.json();
+      if (data.success && Array.isArray(data.items)) {
+        setGalleryItems(data.items);
+        showToast('Visibility updated');
+      }
+    } catch {
+      showToast('Failed to toggle visibility', 'error');
+    }
+  };
+
+// Logout
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' });
     router.push('/admin/login');
@@ -1157,7 +1316,637 @@ export default function AdminDashboardClient({
           </div>
         )}
 
-        {/* ===================== TAB 4: SALON SETTINGS ===================== */}
+
+        {/* ===================== TAB 4: VISUAL PORTFOLIO (GALLERY) ===================== */}
+        {activeTab === 'gallery' && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-[#F5F2EA]">
+                  Craftsmanship Gallery & Visual Portfolio
+                </h3>
+                <p className="text-xs text-[#A6A6A6]">
+                  Upload client haircut photos or provide YouTube/video links. Displays directly on the public website.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setEditingGalleryItem({
+                    title: '',
+                    category: 'HAIRCUTS',
+                    tag: 'Signature Styling',
+                    description: '',
+                    mediaType: 'IMAGE',
+                    mediaUrl: '',
+                    isActive: true,
+                  });
+                  setImageInputMethod('upload');
+                  setGalleryModalOpen(true);
+                }}
+                className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider transition shadow-[0_4px_20px_rgba(200,162,77,0.35)] border border-[#F5E6B3]/40 active:scale-95 shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Work / Media</span>
+              </button>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex items-center space-x-2 overflow-x-auto pb-1">
+              {[
+                { id: 'ALL', label: 'All Items' },
+                { id: 'FADES', label: 'Skin Fades' },
+                { id: 'BEARDS', label: 'Beard Grooming' },
+                { id: 'HAIRCUTS', label: 'Classic Cuts' },
+                { id: 'STYLING', label: 'Styling' },
+              ].map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => setGalleryFilter(f.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+                    galleryFilter === f.id
+                      ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold'
+                      : 'bg-[#141414] text-[#A6A6A6] hover:text-[#F5F2EA] border border-[#262626]'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Items Grid */}
+            {loadingGallery ? (
+              <div className="py-16 text-center text-[#A6A6A6]">
+                <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#C8A24D]" />
+                <span className="text-xs">Loading craftsmanship portfolio...</span>
+              </div>
+            ) : galleryItems.length === 0 ? (
+              <div className="py-16 text-center bg-[#141414] rounded-2xl border border-[#222222] p-8">
+                <Camera className="w-10 h-10 text-[#C8A24D]/60 mx-auto mb-3" />
+                <h4 className="font-serif text-lg font-bold text-[#F5F2EA] mb-1">
+                  No Gallery Works Yet
+                </h4>
+                <p className="text-xs text-[#A6A6A6] max-w-sm mx-auto mb-5">
+                  Start showcasing your barbering transformations by uploading your first photo or adding a video link.
+                </p>
+                <button
+                  onClick={() => {
+                    setEditingGalleryItem({
+                      title: '',
+                      category: 'HAIRCUTS',
+                      tag: 'Signature Styling',
+                      description: '',
+                      mediaType: 'IMAGE',
+                      mediaUrl: '',
+                      isActive: true,
+                    });
+                    setImageInputMethod('upload');
+                    setGalleryModalOpen(true);
+                  }}
+                  className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#C8A24D] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add First Item</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {galleryItems
+                  .filter((item) => galleryFilter === 'ALL' || item.category === galleryFilter)
+                  .map((item) => {
+                    const isVideo = item.mediaType === 'VIDEO';
+                    const displayImage = isVideo
+                      ? getVideoThumbnail(item.mediaUrl, item.thumbnailUrl)
+                      : item.mediaUrl;
+
+                    return (
+                      <div
+                        key={item.id}
+                        className={`rounded-2xl bg-[#141414] border overflow-hidden flex flex-col justify-between transition-all ${
+                          item.isActive ? 'border-[#262626] hover:border-[#C8A24D]/50' : 'border-[#2A1616] opacity-65'
+                        }`}
+                      >
+                        {/* Media Thumbnail */}
+                        <div className="h-48 bg-[#0B0B0B] relative overflow-hidden group">
+                          <img
+                            src={displayImage}
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+
+                          {/* Top Badges */}
+                          <div className="absolute top-2.5 left-2.5 flex items-center space-x-1.5 z-10">
+                            {isVideo ? (
+                              <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider shadow">
+                                <Video className="w-3 h-3" />
+                                <span>VIDEO</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-black/75 text-[#C8A24D] border border-[#C8A24D]/30 text-[10px] font-mono uppercase tracking-wider">
+                                <ImageIcon className="w-3 h-3" />
+                                <span>PHOTO</span>
+                              </span>
+                            )}
+                            <span className="px-2 py-0.5 rounded-full bg-black/60 text-[#A6A6A6] text-[10px] uppercase font-mono">
+                              {item.category}
+                            </span>
+                          </div>
+
+                          <div className="absolute top-2.5 right-2.5 z-10">
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                                item.isActive
+                                  ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30'
+                                  : 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30'
+                              }`}
+                            >
+                              {item.isActive ? 'Live' : 'Hidden'}
+                            </span>
+                          </div>
+
+                          {/* Center Play Button for Video */}
+                          {isVideo && (
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <div className="w-12 h-12 rounded-full bg-black/70 border border-[#C8A24D] text-[#C8A24D] flex items-center justify-center shadow-lg">
+                                <Play className="w-5 h-5 ml-0.5 fill-current" />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Quick Inspect Button on Hover */}
+                          <button
+                            onClick={() => setPreviewGalleryItem(item)}
+                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white"
+                          >
+                            <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#C8A24D] text-[#0B0B0B] text-xs font-bold uppercase">
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Preview</span>
+                            </span>
+                          </button>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-4 flex-1 flex flex-col justify-between">
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider text-[#C8A24D] font-mono font-medium block mb-1">
+                              {item.tag}
+                            </span>
+                            <h4 className="font-serif font-bold text-base text-[#F5F2EA] mb-1 line-clamp-1">
+                              {item.title}
+                            </h4>
+                            <p className="text-xs text-[#A6A6A6] line-clamp-2 mb-3">
+                              {item.description || 'No description provided.'}
+                            </p>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="pt-3 border-t border-[#222] flex items-center justify-between">
+                            <button
+                              onClick={() => handleToggleGalleryItemActive(item.id)}
+                              className={`text-xs flex items-center space-x-1 px-2.5 py-1 rounded-lg border transition ${
+                                item.isActive
+                                  ? 'border-[#262626] text-[#A6A6A6] hover:text-[#EF4444]'
+                                  : 'border-[#10B981]/40 text-[#10B981] bg-[#10B981]/10'
+                              }`}
+                              title={item.isActive ? 'Hide from public site' : 'Make live on public site'}
+                            >
+                              {item.isActive ? (
+                                <>
+                                  <EyeOff className="w-3 h-3" />
+                                  <span>Hide</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="w-3 h-3" />
+                                  <span>Publish</span>
+                                </>
+                              )}
+                            </button>
+
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => {
+                                  setEditingGalleryItem(item);
+                                  setImageInputMethod('url');
+                                  setGalleryModalOpen(true);
+                                }}
+                                className="p-1.5 rounded-lg bg-[#1F1F1F] text-[#C8A24D] hover:bg-[#282828] transition"
+                                title="Edit item"
+                              >
+                                <Edit2 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteGalleryItem(item.id)}
+                                className="p-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition"
+                                title="Delete item"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+
+            {/* Gallery Add / Edit Modal */}
+            {galleryModalOpen && editingGalleryItem && (
+              <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+                <div className="bg-[#141414] border border-[#C8A24D]/40 rounded-2xl max-w-lg w-full p-5 sm:p-6 relative max-h-[92vh] overflow-y-auto shadow-2xl">
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#222]">
+                    <h3 className="font-serif text-lg font-bold text-[#F5F2EA]">
+                      {editingGalleryItem.id ? 'Edit Gallery Work' : 'Add Work to Visual Portfolio'}
+                    </h3>
+                    <button
+                      onClick={() => {
+                        setGalleryModalOpen(false);
+                        setEditingGalleryItem(null);
+                      }}
+                      className="p-1.5 rounded-lg text-[#A6A6A6] hover:text-[#F5F2EA] bg-[#1E1E1E]"
+                    >
+                      <XCircle className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSaveGalleryItem} className="space-y-4">
+                    {/* Media Type Switcher: Photo vs Video */}
+                    <div>
+                      <label className="block text-xs font-medium text-[#F5F2EA] mb-1.5">
+                        Media Format *
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setEditingGalleryItem({
+                              ...editingGalleryItem,
+                              mediaType: 'IMAGE',
+                            })
+                          }
+                          className={`flex items-center justify-center space-x-2 py-2.5 rounded-xl text-xs font-bold transition border ${
+                            editingGalleryItem.mediaType !== 'VIDEO'
+                              ? 'bg-[#C8A24D] text-[#0B0B0B] border-[#F5E6B3]/40 shadow-md'
+                              : 'bg-[#0B0B0B] text-[#A6A6A6] border-[#262626] hover:text-[#F5F2EA]'
+                          }`}
+                        >
+                          <ImageIcon className="w-4 h-4" />
+                          <span>Photo / Image</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setEditingGalleryItem({
+                              ...editingGalleryItem,
+                              mediaType: 'VIDEO',
+                            })
+                          }
+                          className={`flex items-center justify-center space-x-2 py-2.5 rounded-xl text-xs font-bold transition border ${
+                            editingGalleryItem.mediaType === 'VIDEO'
+                              ? 'bg-red-600 text-white border-red-400 shadow-md'
+                              : 'bg-[#0B0B0B] text-[#A6A6A6] border-[#262626] hover:text-[#F5F2EA]'
+                          }`}
+                        >
+                          <Video className="w-4 h-4" />
+                          <span>Video Link (YouTube/MP4)</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* PHOTO INPUT SECTION */}
+                    {editingGalleryItem.mediaType !== 'VIDEO' ? (
+                      <div className="p-3.5 rounded-xl bg-[#0B0B0B] border border-[#222] space-y-3">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-medium text-[#F5F2EA]">
+                            Select Image Source:
+                          </label>
+                          <div className="inline-flex rounded-lg bg-[#181818] p-0.5 border border-[#2B2B2B] text-[11px]">
+                            <button
+                              type="button"
+                              onClick={() => setImageInputMethod('upload')}
+                              className={`px-2.5 py-1 rounded-md transition ${
+                                imageInputMethod === 'upload'
+                                  ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold'
+                                  : 'text-[#A6A6A6]'
+                              }`}
+                            >
+                              Upload Device File
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setImageInputMethod('url')}
+                              className={`px-2.5 py-1 rounded-md transition ${
+                                imageInputMethod === 'url'
+                                  ? 'bg-[#C8A24D] text-[#0B0B0B] font-bold'
+                                  : 'text-[#A6A6A6]'
+                              }`}
+                            >
+                              Image URL
+                            </button>
+                          </div>
+                        </div>
+
+                        {imageInputMethod === 'upload' ? (
+                          <div>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              id="galleryFileInput"
+                              onChange={handleImageFileUpload}
+                              className="hidden"
+                            />
+                            <label
+                              htmlFor="galleryFileInput"
+                              className="flex flex-col items-center justify-center border-2 border-dashed border-[#C8A24D]/40 hover:border-[#C8A24D] rounded-xl p-4 cursor-pointer bg-[#141414] transition text-center group"
+                            >
+                              <Upload className="w-6 h-6 text-[#C8A24D] group-hover:scale-110 transition-transform mb-1.5" />
+                              <span className="text-xs font-semibold text-[#F5F2EA]">
+                                {compressingImage ? 'Processing Image...' : 'Click to Upload Photo from Device'}
+                              </span>
+                              <span className="text-[10px] text-[#737373] mt-0.5">
+                                JPG, PNG, WEBP (auto-optimized for mobile & web)
+                              </span>
+                            </label>
+                          </div>
+                        ) : (
+                          <div>
+                            <input
+                              type="url"
+                              value={editingGalleryItem.mediaUrl || ''}
+                              onChange={(e) =>
+                                setEditingGalleryItem({
+                                  ...editingGalleryItem,
+                                  mediaUrl: e.target.value,
+                                })
+                              }
+                              placeholder="https://example.com/barber-haircut.jpg"
+                              className="w-full px-3 py-2 rounded-xl bg-[#141414] border border-[#2B2B2B] text-xs text-[#F5F2EA] focus:outline-none focus:border-[#C8A24D]"
+                            />
+                          </div>
+                        )}
+
+                        {/* Image Preview */}
+                        {editingGalleryItem.mediaUrl && (
+                          <div className="relative rounded-xl overflow-hidden bg-black border border-[#2B2B2B] h-40 flex items-center justify-center">
+                            <img
+                              src={editingGalleryItem.mediaUrl}
+                              alt="Upload preview"
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute top-2 right-2">
+                              <span className="px-2 py-0.5 rounded-md bg-black/80 text-[#10B981] border border-[#10B981]/40 text-[10px] font-bold">
+                                ✓ Photo Ready
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      /* VIDEO INPUT SECTION */
+                      <div className="p-3.5 rounded-xl bg-[#0B0B0B] border border-[#222] space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-[#F5F2EA] mb-1">
+                            Video URL (YouTube, Vimeo, or MP4 Link) *
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="url"
+                              value={editingGalleryItem.mediaUrl || ''}
+                              onChange={(e) => {
+                                const url = e.target.value;
+                                const thumb = getVideoThumbnail(url);
+                                setEditingGalleryItem({
+                                  ...editingGalleryItem,
+                                  mediaUrl: url,
+                                  thumbnailUrl: thumb,
+                                });
+                              }}
+                              placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                              className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#141414] border border-[#2B2B2B] text-xs text-[#F5F2EA] focus:outline-none focus:border-red-500"
+                              required
+                            />
+                            <Video className="w-4 h-4 text-red-500 absolute left-3 top-2.5" />
+                          </div>
+                          <span className="text-[10px] text-[#737373] mt-1 block">
+                            Paste any standard YouTube video, YouTube Shorts, Vimeo, or direct MP4 link.
+                          </span>
+                        </div>
+
+                        {/* Video Live Preview */}
+                        {editingGalleryItem.mediaUrl && (
+                          <div className="rounded-xl overflow-hidden border border-[#2B2B2B] bg-black">
+                            {editingGalleryItem.mediaUrl.includes('youtube') ||
+                            editingGalleryItem.mediaUrl.includes('youtu.be') ? (
+                              <div className="relative aspect-video">
+                                <img
+                                  src={getVideoThumbnail(editingGalleryItem.mediaUrl)}
+                                  alt="YouTube preview"
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                                  <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg">
+                                    <Play className="w-5 h-5 ml-0.5 fill-current" />
+                                  </div>
+                                </div>
+                                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/80 text-white text-[10px] font-bold">
+                                  YouTube Auto-Detected
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="p-3 text-center text-xs text-[#C8A24D]">
+                                Direct Video Link Registered
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Title */}
+                    <div>
+                      <label className="block text-xs font-medium text-[#F5F2EA] mb-1">
+                        Work Title *
+                      </label>
+                      <input
+                        type="text"
+                        value={editingGalleryItem.title || ''}
+                        onChange={(e) =>
+                          setEditingGalleryItem({
+                            ...editingGalleryItem,
+                            title: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. Low Skin Fade & Sculpted Beard"
+                        className="w-full px-3 py-2 rounded-xl bg-[#0B0B0B] border border-[#262626] text-xs text-[#F5F2EA] focus:outline-none focus:border-[#C8A24D]"
+                        required
+                      />
+                    </div>
+
+                    {/* Category & Tag */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-[#F5F2EA] mb-1">
+                          Category
+                        </label>
+                        <select
+                          value={editingGalleryItem.category || 'HAIRCUTS'}
+                          onChange={(e) =>
+                            setEditingGalleryItem({
+                              ...editingGalleryItem,
+                              category: e.target.value as any,
+                            })
+                          }
+                          className="w-full px-3 py-2 rounded-xl bg-[#0B0B0B] border border-[#262626] text-xs text-[#F5F2EA] focus:outline-none focus:border-[#C8A24D]"
+                        >
+                          <option value="FADES">Skin Fades</option>
+                          <option value="BEARDS">Beard Grooming</option>
+                          <option value="HAIRCUTS">Classic Cuts</option>
+                          <option value="STYLING">Signature Styling</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-[#F5F2EA] mb-1">
+                          Tag / Badge
+                        </label>
+                        <input
+                          type="text"
+                          value={editingGalleryItem.tag || ''}
+                          onChange={(e) =>
+                            setEditingGalleryItem({
+                              ...editingGalleryItem,
+                              tag: e.target.value,
+                            })
+                          }
+                          placeholder="e.g. Fade & Taper"
+                          className="w-full px-3 py-2 rounded-xl bg-[#0B0B0B] border border-[#262626] text-xs text-[#F5F2EA] focus:outline-none focus:border-[#C8A24D]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                      <label className="block text-xs font-medium text-[#F5F2EA] mb-1">
+                        Description / Technique Notes
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={editingGalleryItem.description || ''}
+                        onChange={(e) =>
+                          setEditingGalleryItem({
+                            ...editingGalleryItem,
+                            description: e.target.value,
+                          })
+                        }
+                        placeholder="Briefly describe the cut, fade length, products used, or styling advice..."
+                        className="w-full px-3 py-2 rounded-xl bg-[#0B0B0B] border border-[#262626] text-xs text-[#F5F2EA] focus:outline-none focus:border-[#C8A24D]"
+                      />
+                    </div>
+
+                    {/* Active Checkbox */}
+                    <div className="flex items-center space-x-2 pt-1">
+                      <input
+                        type="checkbox"
+                        id="galleryActiveCheck"
+                        checked={editingGalleryItem.isActive !== false}
+                        onChange={(e) =>
+                          setEditingGalleryItem({
+                            ...editingGalleryItem,
+                            isActive: e.target.checked,
+                          })
+                        }
+                        className="rounded border-[#262626] bg-[#0B0B0B] text-[#C8A24D] focus:ring-[#C8A24D]"
+                      />
+                      <label htmlFor="galleryActiveCheck" className="text-xs text-[#F5F2EA]">
+                        Publish immediately to public website
+                      </label>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="pt-4 border-t border-[#222] flex items-center justify-end space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setGalleryModalOpen(false);
+                          setEditingGalleryItem(null);
+                        }}
+                        className="px-4 py-2 rounded-xl border border-[#2B2B2B] text-xs text-[#A6A6A6]"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={savingGalleryItem || compressingImage || !editingGalleryItem.mediaUrl}
+                        className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#ECC876] via-[#C8A24D] to-[#9F7A28] hover:from-[#F5D589] hover:via-[#D4AE55] hover:to-[#B08832] text-[#0B0B0B] font-bold text-xs uppercase tracking-wider disabled:opacity-50 shadow-md border border-[#F5E6B3]/40 active:scale-95 transition-all"
+                      >
+                        {savingGalleryItem ? 'Saving...' : 'Save to Gallery'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Admin Live Inspect / Player Modal */}
+            {previewGalleryItem && (
+              <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+                <div className="bg-[#141414] border border-[#C8A24D]/40 rounded-2xl max-w-xl w-full p-5 relative shadow-2xl">
+                  <button
+                    onClick={() => setPreviewGalleryItem(null)}
+                    className="absolute top-4 right-4 z-10 p-1.5 rounded-xl bg-black/60 text-[#A6A6A6] hover:text-[#F5F2EA]"
+                  >
+                    <XCircle className="w-5 h-5" />
+                  </button>
+
+                  <div className="rounded-xl overflow-hidden bg-black border border-[#262626] mb-4 aspect-video flex items-center justify-center">
+                    {previewGalleryItem.mediaType === 'VIDEO' ? (
+                      previewGalleryItem.mediaUrl.includes('youtube') ||
+                      previewGalleryItem.mediaUrl.includes('youtu.be') ? (
+                        <iframe
+                          src={getEmbedVideoUrl(previewGalleryItem.mediaUrl)}
+                          title={previewGalleryItem.title}
+                          className="w-full h-full border-0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <video
+                          src={previewGalleryItem.mediaUrl}
+                          controls
+                          autoPlay
+                          playsInline
+                          className="w-full h-full object-contain"
+                        />
+                      )
+                    ) : (
+                      <img
+                        src={previewGalleryItem.mediaUrl}
+                        alt={previewGalleryItem.title}
+                        className="w-full h-full object-contain"
+                      />
+                    )}
+                  </div>
+
+                  <h4 className="font-serif text-lg font-bold text-[#F5F2EA] mb-1">
+                    {previewGalleryItem.title}
+                  </h4>
+                  <p className="text-xs text-[#A6A6A6] mb-3">
+                    {previewGalleryItem.description || 'No description.'}
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-[#737373] pt-2 border-t border-[#222]">
+                    <span>Category: {previewGalleryItem.category}</span>
+                    <span>Tag: {previewGalleryItem.tag}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ===================== TAB 5: SALON SETTINGS ===================== */}
         {activeTab === 'settings' && (
           <div className="max-w-3xl space-y-6 animate-in fade-in duration-200">
             <div>
