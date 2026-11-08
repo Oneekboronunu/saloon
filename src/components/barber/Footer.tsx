@@ -69,6 +69,11 @@ export default function Footer({
                 </a>
               </li>
               <li>
+                <a href="#merch" className="hover:text-[#C8A24D] transition-colors">
+                  {t('nav_merch')}
+                </a>
+              </li>
+              <li>
                 <a href="#why-us" className="hover:text-[#C8A24D] transition-colors">
                   {t('nav_why_us')}
                 </a>

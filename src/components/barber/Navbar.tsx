@@ -29,6 +29,7 @@ export default function Navbar({
   const navLinks = [
     { label: t('nav_services'), href: '#services' },
     { label: t('nav_pricing'), href: '#pricing' },
+    { label: t('nav_merch'), href: '#merch' },
     { label: t('nav_why_us'), href: '#why-us' },
     { label: t('nav_gallery'), href: '#gallery' },
     { label: t('nav_location'), href: '#location' },

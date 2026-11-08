@@ -6,6 +6,7 @@ import Hero from './Hero';
 import ServicesSection, { ServiceItem } from './ServicesSection';
 import WhyChooseUs from './WhyChooseUs';
 import BookingWizard from './BookingWizard';
+import MerchSection from './MerchSection';
 import Gallery from './Gallery';
 import LocationContact from './LocationContact';
 import Footer from './Footer';
@@ -77,10 +78,16 @@ export default function BarberHomeClient({
         {/* 5. Why Choose Us */}
         <WhyChooseUs />
 
-        {/* 6. Responsive Gallery */}
+        {/* 6. Official Merchandise & Grooming Store */}
+        <MerchSection
+          currency={currency}
+          whatsappNumber={whatsappNumber}
+        />
+
+        {/* 7. Responsive Gallery */}
         <Gallery />
 
-        {/* 7. Location and Contact */}
+        {/* 8. Location and Contact */}
         <LocationContact
           salonName={salonName}
           address={salonAddress}
@@ -90,7 +97,7 @@ export default function BarberHomeClient({
         />
       </main>
 
-      {/* 8. Footer */}
+      {/* 9. Footer */}
       <Footer salonName={salonName} phone={salonPhone} address={salonAddress} />
     </div>
   );
