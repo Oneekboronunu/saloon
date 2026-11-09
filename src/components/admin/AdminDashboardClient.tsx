@@ -532,9 +532,13 @@ export default function AdminDashboardClient({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-serif font-bold text-sm sm:text-base text-[#F5F2EA]">
-                {settings.salon_name || 'GOLDEN CUTS'}
-              </span>
+              <div className="h-6 flex items-center">
+                <img
+                  src="/images/aiyan-wordmark.png"
+                  alt="AIYAN"
+                  className="h-full w-auto object-contain"
+                />
+              </div>
               <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider bg-[#C8A24D]/15 text-[#C8A24D] border border-[#C8A24D]/30">
                 Staff Control
               </span>

@@ -33,10 +33,14 @@ export default function Footer({
                 />
               </div>
               <div className="flex flex-col justify-center">
-                <span className="font-serif tracking-widest text-lg font-bold text-[#F5F2EA] leading-tight">
-                  {language === 'bn' ? 'আইয়ান' : 'AIYAN'}
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#C8A24D] font-semibold leading-none mt-0.5">
+                <div className="h-7 sm:h-8 flex items-center">
+                  <img
+                    src="/images/aiyan-wordmark.png"
+                    alt="AIYAN"
+                    className="h-full w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(200,162,77,0.35)]"
+                  />
+                </div>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#C8A24D] font-semibold leading-none mt-1">
                   {language === 'bn' ? 'হেয়ার কাটিং সেলুন' : 'HAIR CUTTING SALON'}
                 </span>
               </div>

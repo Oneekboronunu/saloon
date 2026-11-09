@@ -54,9 +54,13 @@ export default function AdminLoginPage() {
               className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(200,162,77,0.4)]"
             />
           </div>
-          <h1 className="font-serif text-2xl font-bold tracking-tight text-[#F5F2EA]">
-            AIYAN
-          </h1>
+          <div className="h-9 flex items-center justify-center my-2">
+            <img
+              src="/images/aiyan-wordmark.png"
+              alt="AIYAN"
+              className="h-full w-auto object-contain filter drop-shadow-[0_2px_12px_rgba(200,162,77,0.5)]"
+            />
+          </div>
           <p className="text-xs text-[#C8A24D] uppercase tracking-[0.25em] mt-1 font-medium">
             Executive Portal
           </p>

@@ -58,10 +58,14 @@ export default function Navbar({
               />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="font-serif tracking-wider sm:tracking-widest text-[15px] sm:text-lg md:text-xl font-bold text-[#F5F2EA] group-hover:text-[#C8A24D] transition-colors leading-tight whitespace-nowrap">
-                {language === 'bn' ? 'আইয়ান' : 'AIYAN'}
-              </span>
-              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.22em] text-[#C8A24D] font-semibold leading-none mt-0.5 whitespace-nowrap">
+              <div className="h-6 sm:h-7 md:h-8 flex items-center">
+                <img
+                  src="/images/aiyan-wordmark.png"
+                  alt="AIYAN"
+                  className="h-full w-auto object-contain filter drop-shadow-[0_2px_10px_rgba(200,162,77,0.4)] group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <span className="text-[8px] sm:text-[9.5px] uppercase tracking-[0.18em] sm:tracking-[0.24em] text-[#C8A24D] font-semibold leading-none mt-1 whitespace-nowrap">
                 {language === 'bn' ? 'হেয়ার কাটিং সেলুন' : 'HAIR CUTTING SALON'}
               </span>
             </div>
